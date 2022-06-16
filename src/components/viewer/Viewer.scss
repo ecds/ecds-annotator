@@ -1,0 +1,20 @@
+.Viewer {
+  background-color: black;
+  height: 100%;
+  font-size: 16px;
+
+  span {
+    font-family: "Open Sans", "Lucida Grande", Verdana, Arial, sans-serif;
+  }
+
+  button {
+    color: white;
+    font-size: 1.5rem;
+  }
+}
+
+.openseadragon-canvas {
+  div {
+    position: absolute !important;
+  }
+}

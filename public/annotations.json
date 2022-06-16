@@ -1,0 +1,37 @@
+{
+  "@context": "http://iiif.io/api/presentation/2/context.json",
+  id: "https://readux.io/annotations/jay/01891122.4807.emory.edu/list/01891122.4807.emory.edu$5",
+  type: "sc:AnnotationList",
+  resources: [{
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      id: "#a88b22d0-6106-4872-9435-c78b5e89fede",
+      type: "Annotation",
+      body: [{
+        type: "TextualBody",
+        value: "It's Hallstatt in Upper Austria",
+      }, ],
+      target: {
+        selector: {
+          type: "SvgSelector",
+          value: '<svg><path xmlns="http://www.w3.org/2000/svg" d="M192.17315,825.81907h220.36187v0h220.36187v189.15953v189.15953h-220.36187h-220.36187v-189.15953z" data-paper-data="{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;newlyCreatedStrokeFactor&quot;:5,&quot;newlyCreated&quot;:true,&quot;editable&quot;:true,&quot;annotation&quot;:null}" id="rectangle_b8f57c3c-3907-48ef-a581-8f37a7c4c224" fill-opacity="0" fill="#00bfff" fill-rule="nonzero" stroke="#00bfff" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"/></svg>',
+        },
+      },
+    },
+    {
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      id: "#218d01ff-f077-4cc3-992d-1c81c426e51b",
+      type: "Annotation",
+      body: [{
+        type: "TextualBody",
+        purpose: "tagging",
+        value: "Church",
+      }, ],
+      target: {
+        selector: [{
+          type: "SvgSelector",
+          value: '<svg><path xmlns="http://www.w3.org/2000/svg" d="M292.44115,379.92356c21.79051,-17.48189 52.52955,-30.50006 83.41755,-30.4845v0v0c30.888,0.01555 57.79664,12.19384 83.41755,30.4845c25.62092,18.29066 35.57945,46.1621 34.55268,73.5961c-1.02676,27.434 -13.03881,54.43056 -34.55268,73.5961c-21.51387,19.16554 -52.52955,30.50006 -83.41755,30.4845c-30.888,-0.01555 -61.64833,-11.38118 -83.41755,-30.4845c-21.76923,-19.10333 -34.54736,-45.94435 -34.55268,-73.5961c-0.00532,-27.65175 12.76217,-56.11421 34.55268,-73.5961z" data-paper-data="{&quot;strokeWidth&quot;:1,&quot;rotation&quot;:0,&quot;deleteIcon&quot;:null,&quot;rotationIcon&quot;:null,&quot;group&quot;:null,&quot;newlyCreatedStrokeFactor&quot;:5,&quot;newlyCreated&quot;:true,&quot;editable&quot;:true,&quot;annotation&quot;:null}" id="ellipse_aa7bd171-e831-41e7-bbb5-91bae684e443" fill-opacity="0" fill="#00bfff" fill-rule="nonzero" stroke="#00bfff" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"/></svg>',
+        }, ],
+      },
+    },
+  ],
+};

@@ -1,0 +1,21 @@
+.Manifest {
+  .rdx-page-button {
+    background-color: white;
+    color: black;
+    min-width: 25%;
+    text-transform: uppercase;
+
+    // &:hover {
+    // }
+
+    &:disabled {
+      background-color: darkgray;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.rdx-thumbnail {
+  min-height: 200px;
+  min-width: 200px;
+}

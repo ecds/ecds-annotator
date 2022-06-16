@@ -1,0 +1,18 @@
+.Toolbar {
+  background: rgb(0 0 0 / 50%);
+  color: white;
+  font-size: 1.5rem;
+  padding: 1rem !important;
+  position: absolute !important;
+  top: 0;
+
+  button {
+    padding-left: .25rem;
+    padding-right: .25rem;
+
+    &.active {
+      background-color: white;
+      color: black;
+    }
+  }
+}

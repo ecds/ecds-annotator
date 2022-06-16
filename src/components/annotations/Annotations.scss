@@ -1,0 +1,28 @@
+svg.a9s-annotationlayer .a9s-selection .a9s-inner,
+svg.a9s-annotationlayer .a9s-annotation .a9s-inner  {
+  stroke-width:4;
+  stroke:rgba(0, 191, 255, 1.0);
+  stroke-dasharray:5;
+}
+
+.openseadragon-canvas {
+  span {
+    pointer-events: all;
+    z-index: 1;
+
+    button {
+      background-color: rgba(0, 191, 255, 0.5);
+      color: inherit;
+      font-size: unset;
+      letter-spacing: inherit;
+    }
+  }
+}
+
+.rdx-annotation-content {
+  width: 20vw;
+}
+
+.rdx-annotation-content-show {
+  display: block;
+}
