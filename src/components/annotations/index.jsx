@@ -50,7 +50,7 @@ class Annotations extends React.Component {
         ],
         target: {
           type: "RangeSelector",
-          source: this.props.canvas['@id'],
+          source: this.props.canvas.id,
           selector: {}
         },
         "@context": "http://www.w3.org/ns/anno.jsonld",
@@ -188,16 +188,17 @@ class Annotations extends React.Component {
 
   async getAnnotations() {
     const userAnnotations = [];
-    if (this.props.localEnv == 'dev') {
-      for (const annotation of data.items) {
-        userAnnotations.push(annotation);
-      }
-    } else {
-      for (const other of this.props.canvas.otherContent) {
-        if (other.label == 'OCR Text' && other['@type'] == 'AnnotationPage') {
-          new OCR({ url: other['@id'], viewer: this.props.viewer, ocrAdded: this.ocrAdded });
-        } else if (other.label && !other.label.includes('OCR') && other['@type'] == 'AnnotationPage') {
-          const annotations = await this.annotationServer.get(other['@id']);
+
+    for (const annotationPage of this.props.canvas.annotations) {
+      if (annotationPage.id.endsWith('ocr')) {
+        new OCR({ url: annotationPage.id, viewer: this.props.viewer, ocrAdded: this.ocrAdded });
+      } else {
+        if (this.props.localEnv === 'dev') {
+          for (const annotation of data.items) {
+            userAnnotations.push(annotation);
+          }
+        } else {
+          const annotations = await this.annotationServer.get(annotationPage.id);
           for (const annotation of annotations.items) {
             userAnnotations.push(annotation);
           }
@@ -221,7 +222,7 @@ class Annotations extends React.Component {
   dispatchCanvasSwitch(details={}) {
     const eventDetails = {
       annotationsOnPage: this.state.userAnnotations.length,
-      canvas: this.props.canvas['@id'].split('/').reverse()[0],
+      canvas: this.props.canvas.id.split('/').reverse()[0],
       annotationAdded: false,
       annotationDeleted: false,
       ...details
@@ -313,7 +314,7 @@ class Annotations extends React.Component {
           new TextAnnotation(annotation);
           this.state.textAnnotations.push(textAnnotation);
         } else {
-          annotation.target.source = this.props.canvas['@id']
+          annotation.target.source = this.props.canvas.id
           if (annotation.target.selector.type == 'SvgSelector') {
             const svgShape = document.querySelector(`.a9s-annotation[data-id="${annotation.id}"]`);
             const { x, y, width, height } = svgShape.getBBox();

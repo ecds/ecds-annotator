@@ -26,7 +26,7 @@ function Manifest(props) {
       setShowAll(true);
     } else if (pathPid !== currentCanvasPid) {
       setShowAll(false);
-      setCurrentCanvas(canvases.find(canvas => canvas['@id'].includes(pathPid)));
+      setCurrentCanvas(canvases.find(canvas => canvas.id.includes(pathPid)));
       setCurrentCanvasPid(pathPid);
     }
   })
@@ -34,14 +34,15 @@ function Manifest(props) {
   async function fetchManifest() {
     if (!data) {
       let response = await fetch(props.manifest);
+      console.log("🚀 ~ file: Manifest.jsx ~ line 37 ~ fetchManifest ~ response", response)
       let json = await response.json();
       setData(json);
       setThumbnails(
-        json.sequences.map(
-          sequence => sequence.canvases.map(
-            canvas => `${canvas.images[0].resource.service['@id']}/full/200,/0/default.jpg`
+        json.items.map(
+          item => item.items.map(
+            canvasItems => canvasItems.body
           )
-        )[0]
+        ).flat().filter(body => body.type == 'Images')
       );
     }
   }
@@ -50,14 +51,14 @@ function Manifest(props) {
     if (!data) {
       fetchManifest();
     } else if (canvases.length == 0) {
-      data.sequences.forEach(sequence => {
-        sequence.canvases.forEach(canvas => {
-          canvases.push(canvas)
-        });
+      data.items.forEach(item => {
+        if (item.type === 'Canvas') {
+          canvases.push(item);
+        }
       });
 
       if (!currentCanvas) {
-        const pids = canvases.map(canvas => getCanvasPid(canvas['@id']));
+        const pids = canvases.map(canvas => getCanvasPid(canvas.id));
         const pidFromPath = getCanvasPid(location.pathname);
         const currentCanvasIndex = pidFromPath ? pids.indexOf(pidFromPath) : 0;
         setCurrentCanvas(canvases[currentCanvasIndex]);
@@ -95,7 +96,7 @@ function Manifest(props) {
 
   const goToCanvas = (canvas) => {
     setCurrentCanvas(canvases[canvas]);
-    setCurrentCanvasPid(getCanvasPid(canvases[canvas]['@id']));
+    setCurrentCanvasPid(getCanvasPid(canvases[canvas].id));
     setShowAll(false);
   }
 

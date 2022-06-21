@@ -3,6 +3,7 @@ import AnnotationServer from '../../utils/AnnotationServer';
 
 class OCR {
   constructor(props) {
+    console.log("🚀 ~ file: OCR.js ~ line 6 ~ OCR ~ constructor ~ props", props)
     this.props = props;
     this.ocrOverlays = [];
     // this.ocrElements = [];
@@ -125,8 +126,10 @@ class OCR {
   }
 
   async fetchOCR() {
+    console.log("🚀 ~ file: OCR.js ~ line 131 ~ OCR ~ fetchOCR ~ this.props.url", this.props.url)
     const annotationServer = new AnnotationServer();
     const data = await annotationServer.get(this.props.url);
+    console.log("🚀 ~ file: OCR.js ~ line 131 ~ OCR ~ fetchOCR ~ data", data)
 
     this.ocrAnnotations = data.items;
 

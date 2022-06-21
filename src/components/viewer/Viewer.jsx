@@ -47,7 +47,7 @@ class Viewer extends React.Component {
       width: imageBounds.width,
       tileSource: {
         "@context": "http://iiif.io/api/image/2/context.json",
-        "@id": this.props.canvas.images[0].resource.service['@id'],
+        "@id": this.props.canvas.items[0].body.id,
         height: this.props.canvas.height,
         width: this.props.canvas.width,
         profile: ["http://iiif.io/api/image/2/level2.json"],
