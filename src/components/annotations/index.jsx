@@ -56,7 +56,7 @@ class Annotations extends React.Component {
       }
     };
 
-    this.baseTextAnno.annotation.clone = function() { return this.baseTextAnno };
+    this.baseTextAnno.annotation.clone = function() { return this.baseTextAnno.annotation };
 
     this.annotationServer = new AnnotationServer({ token: this.props.token });
 
@@ -66,7 +66,12 @@ class Annotations extends React.Component {
       anno: null,
       selectedTextAnnoElement: null,
       newTextAnnotation: null,
-      selectedTextAnno: this.baseTextAnno,
+      selectedTextAnno: {
+        annotation: {
+          clone: () => { return this.baseTextAnno}
+        },
+        ...this.baseTextAnno
+      },
       widgets: [EditorWidget, 'TAG'],
       osdCanvas: document.querySelector(`.${this.props.viewer.canvas.className} div`),
       showAnnotations: false,
@@ -401,7 +406,7 @@ class Annotations extends React.Component {
           ocrReady={this.state.ocrReady}
           {...this.props} />
 
-        {(this.state.selectedTextAnnoElement && this.state.selectedTextAnno.annotation && !this._editor.current) &&
+        {(this.state.selectedTextAnnoElement) &&
           <Editor
             ref={this._editor}
             detachable
