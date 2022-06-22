@@ -29,6 +29,7 @@ class Annotations extends React.Component {
     this.baseTextAnno = {
       annotation: {
         type: "Annotation",
+        clone: function() { return this.baseTextAnno.annotation },
         isEqual: function() { return true },
         body: [
           {
@@ -66,12 +67,7 @@ class Annotations extends React.Component {
       anno: null,
       selectedTextAnnoElement: null,
       newTextAnnotation: null,
-      selectedTextAnno: {
-        annotation: {
-          clone: () => { return this.baseTextAnno}
-        },
-        ...this.baseTextAnno
-      },
+      selectedTextAnno: this.baseTextAnno,
       widgets: [EditorWidget, 'TAG'],
       osdCanvas: document.querySelector(`.${this.props.viewer.canvas.className} div`),
       showAnnotations: false,
@@ -429,11 +425,6 @@ class Annotations extends React.Component {
       </div>
     )
   }
-
-  __createAnnotoriousAnnotation(annotation) {
-
-  }
-
 }
 
 export default Annotations;
