@@ -89,7 +89,14 @@ function Manifest(props) {
   });
 
   const getCanvasPid = (uri) => {
-    return uri.split('/').reverse()[0];
+    const parts = uri.split('/').reverse();
+    console.log("🚀 ~ file: Manifest.jsx ~ line 93 ~ getCanvasPid ~ parts", parts)
+
+    if (parts[0] === 'canvas') {
+      return parts[1];
+    }
+
+    return parts[0];
   }
 
   const toggleShowAll = () => {
