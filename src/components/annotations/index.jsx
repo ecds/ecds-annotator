@@ -371,9 +371,7 @@ class Annotations extends React.Component {
     let selection = window.getSelection();
     if (!selection.rangeCount) return;
     if (selection.anchorOffset === selection.focusOffset && selection.anchorNode === selection.focusNode) return;
-    const rangeSelector = new TextAnnotation(selection.getRangeAt(0))
-    const newTextAnnotation = {...this.baseTextAnno.annotation, target: {...this.baseTextAnno.annotation.target, ...rangeSelector}};
-    console.log("🚀 ~ file: index.jsx ~ line 377 ~ Annotations ~ createTextAnnotation ~ newTextAnnotation", newTextAnnotation)
+    const newTextAnnotation = new TextAnnotation(selection.getRangeAt(0));
     this.state.osdCanvas.removeEventListener('mouseup', this.createTextAnnotation);
     this.state.osdCanvas.style.zIndex = '';
     this.setState(
