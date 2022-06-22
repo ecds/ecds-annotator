@@ -64,7 +64,6 @@ class TextAnnotation {
   }
 
   showAnnotation(event) {
-    // console.log("🚀 ~ file: TextAnnotation.js ~ line 63 ~ TextAnnotation ~ showAnnotation ~ event", event, this.annotation.bodies[0].value)
     // const content = document.createElement('div');
     // content.className = 'rdx-annotation-content';
     // content.innerHTML = firstComment.value;

@@ -8,7 +8,7 @@ import './Viewer.scss';
 class Viewer extends React.Component {
   constructor(props) {
     super(props);
-    console.log("🚀 ~ file: Viewer.jsx ~ line 11 ~ Viewer ~ constructor ~ props", props)
+
     this.state = {
       viewer: null
     };
@@ -35,12 +35,13 @@ class Viewer extends React.Component {
   addCanvas() {
     let imageBounds = new OpenSeadragon.Rect(0, 0, this.props.canvas.width, this.props.canvas.height);
     this.state.viewer.viewport.fitBounds(imageBounds, true);
-    console.log("🚀 ~ file: Viewer.jsx ~ line 38 ~ Viewer ~ addCanvas ~ this.state.viewer", this.state.viewer, this.state.viewer.world.getItemCount())
     const replaceOptions = {};
+
     if (this.state.viewer.world.getItemCount() > 0) {
       replaceOptions.replace = true;
       replaceOptions.index = 0;
     }
+
     this.state.viewer.addTiledImage({
       x: imageBounds.x,
       y: imageBounds.y,

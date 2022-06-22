@@ -24,7 +24,6 @@ import 'jodit/build/jodit.es2018.min.css';
 
 class Annotations extends React.Component {
   constructor(props) {
-    console.log("🚀 ~ file: Annotations.jsx ~ line 24 ~ Annotations ~ constructor ~ props", props)
     super(props);
 
     this.baseTextAnno = {
@@ -102,7 +101,6 @@ class Annotations extends React.Component {
     });
 
     annotorious.setAuthInfo(this.props.user);
-    console.log("🚀 ~ file: Annotations.jsx ~ line 101 ~ Annotations ~ componentDidMount ~ annotorious", annotorious)
 
     BetterPolygon(annotorious);
 
@@ -125,17 +123,15 @@ class Annotations extends React.Component {
       });
     });
 
-    annotorious.on('clickAnnotation', (annotation, element) => {
-      console.log("🚀 ~ file: Annotations.jsx ~ line 40 ~ Annotations ~ annotorious.on ~ annotation, element", annotation, element)
-    });
+    // annotorious.on('clickAnnotation', (annotation, element) => {
+    //
+    // });
 
     annotorious.on('startSelection', (selection) => {
       this.setState({ isAnnotating: true });
-      console.log("🚀 ~ file: Annotations.jsx ~ line 122 ~ Annotations ~ annotorious.on ~ startSelection", selection)
     });
 
     annotorious.on('cancelSelected', (selection) => {
-      console.log("🚀 ~ file: Annotations.jsx ~ line 122 ~ Annotations ~ annotorious.on ~ cancel selection", selection)
       this.setState({
         isAnnotating: false,
         selectedTextAnno: this.baseTextAnno,
@@ -153,19 +149,10 @@ class Annotations extends React.Component {
 
     });
 
-    // annotorious.on('mouseEnterAnnotation', (annotation, element) => {
-    //   element.querySelector('.rdx-annotation-content').classList.add('rdx-annotation-content-show');
-    //   console.log("🚀 ~ file: Annotations.jsx ~ line 126 ~ Annotations ~ annotorious.on ~ annotation, element", annotation, element)
-    // });
 
-    // annotorious.on('mouseLeaveAnnotation', (annotation, element) => {
-    //   element.querySelector('.rdx-annotation-content').classList.remove('rdx-annotation-content-show');
-    //   console.log("🚀 ~ file: Annotations.jsx ~ line 130 ~ Annotations ~ annotorious.on ~ annotation, element", annotation, element)
-    // });
+    // annotorious.on('selectAnnotation', (annotation, element) => {
 
-    annotorious.on('selectAnnotation', (annotation, element) => {
-      console.log("🚀 ~ file: Annotations.jsx ~ line 134 ~ Annotations ~ annotorious.on ~ annotation, element", annotation, element)
-    });
+    // });
 
     this.getAnnotations();
 
@@ -304,7 +291,6 @@ class Annotations extends React.Component {
   }
 
   onCreateOrUpdateAnnotation(annotation, arg) {
-    console.log("🚀 ~ file: Annotations.jsx ~ line 310 ~ Annotations ~ onCreateOrUpdateAnnotation ~ annotation, arg", annotation, arg)
     switch (arg) {
       case 'create':
         if (this.state.newTextAnnotation) {
@@ -334,7 +320,7 @@ class Annotations extends React.Component {
             this.__addAnnotationContentOverlay(svg_element, annotation);
           } else {
             const links = document.querySelectorAll(`[data-id="#${annotation.id}"]`);
-            console.log("🚀 ~ file: Annotations.jsx ~ line 328 ~ Annotations ~ this.annotationServer.update ~ links", links, annotation.id)
+
             for (const link of links) {
               this.__addAnnotationContentOverlay(link.parentNode, annotation, true);
             }
@@ -348,16 +334,13 @@ class Annotations extends React.Component {
       selectedTextAnno: this.baseTextAnno,
       selectedTextAnnoElement: null
     });
-    // this.setState({ selectedTextAnnoElement: null });
   }
 
   onDeleteAnnotation(event) {
-    console.log("🚀 ~ file: Annotations.jsx ~ line 61 ~ Annotations ~ onDeleteAnnotation ~ event", event)
     this.setState({ selectedTextAnnoElement: null });
   }
 
   onCancelAnnotation(event) {
-    console.log("🚀 ~ file: Annotations.jsx ~ line 65 ~ Annotations ~ onCancelAnnotation ~ event", event)
     this.setState({ selectedTextAnnoElement: null });
   }
 

@@ -48,7 +48,6 @@ class Toolbar extends React.Component {
       this.props.annotorious.setDrawingEnabled(true);
       this.props.annotorious.setDrawingTool(tool);
     }
-    console.log("🚀 ~ file: Toolbar.jsx ~ line 48 ~ Toolbar ~ selectTool ~ this.props.annotorious", this.props.annotorious)
   }
 
   toggleTools() {

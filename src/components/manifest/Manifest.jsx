@@ -34,7 +34,6 @@ function Manifest(props) {
   async function fetchManifest() {
     if (!data) {
       let response = await fetch(props.manifest);
-      console.log("🚀 ~ file: Manifest.jsx ~ line 37 ~ fetchManifest ~ response", response)
       let json = await response.json();
       setData(json);
       setThumbnails(
