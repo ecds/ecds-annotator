@@ -63,6 +63,7 @@ function Manifest(props) {
         console.log("🚀 ~ file: Manifest.jsx ~ line 63 ~ useEffect ~ pids", pids)
         const pidFromPath = getCanvasPid(location.pathname);
         const currentCanvasIndex = pidFromPath ? pids.indexOf(pidFromPath) : 0;
+        console.log("🚀 ~ file: Manifest.jsx ~ line 67 ~ useEffect ~ canvases[currentCanvasIndex]", canvases[currentCanvasIndex])
         setCurrentCanvas(canvases[currentCanvasIndex]);
         setFirstCanvas(canvases[0]);
         setLastCanvas(canvases[canvases.length - 1]);
