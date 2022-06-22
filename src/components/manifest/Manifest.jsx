@@ -36,6 +36,7 @@ function Manifest(props) {
       let response = await fetch(props.manifest);
       let json = await response.json();
       setData(json);
+      console.log("🚀 ~ file: Manifest.jsx ~ line 39 ~ fetchManifest ~ json", json)
       setThumbnails(
         json.items.map(
           item => item.items.map(
@@ -55,6 +56,7 @@ function Manifest(props) {
           canvases.push(item);
         }
       });
+      console.log("🚀 ~ file: Manifest.jsx ~ line 59 ~ useEffect ~ item", item)
 
       if (!currentCanvas) {
         const pids = canvases.map(canvas => getCanvasPid(canvas.id));
