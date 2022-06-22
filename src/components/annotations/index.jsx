@@ -278,6 +278,7 @@ class Annotations extends React.Component {
   }
 
   onCreateOrUpdateAnnotation(annotation, arg) {
+    console.log("🚀 ~ file: index.jsx ~ line 281 ~ Annotations ~ onCreateOrUpdateAnnotation ~ annotation, arg", annotation, arg)
     annotation.body.forEach(body => {
       body.creator = this.props.user;
     });
