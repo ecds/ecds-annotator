@@ -121,7 +121,7 @@ function Manifest(props) {
               return (
                 <div className='p-4 rdx-thumbnail' key={index}>
                   <button onClick={() => goToCanvas(index)}>
-                    <img src={thumbnail.id} />
+                    <img src={`${thumbnail.id}/full/200,/0/default.jpg`} />
                     <p className='flex justify-center'>{index + 1}</p>
                   </button>
                 </div>
