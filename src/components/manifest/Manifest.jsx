@@ -41,7 +41,7 @@ function Manifest(props) {
           item => item.items.map(
             canvasItems => canvasItems.body
           )
-        ).flat().filter(body => body.type == 'Images')
+        ).flat().filter(body => body.type == 'Image')
       );
     }
   }
