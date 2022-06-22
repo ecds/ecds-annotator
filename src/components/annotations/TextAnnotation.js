@@ -3,6 +3,7 @@ import OpenSeadragon from 'openseadragon';
 
 class TextAnnotation {
   constructor(annotation, viewer) {
+    console.log("🚀 ~ file: TextAnnotation.js ~ line 6 ~ TextAnnotation ~ constructor ~ annotation, viewer", annotation, viewer)
     if (annotation instanceof Range) {
       return {
         "type": "RangeSelector",

@@ -56,7 +56,7 @@ class Annotations extends React.Component {
       }
     };
 
-    this.baseTextAnno.annotation.clone = function() { return this.baseTextAnno.annotation };
+    // this.baseTextAnno.annotation.clone = function() { return this.baseTextAnno.annotation };
 
     this.annotationServer = new AnnotationServer({ token: this.props.token });
 
@@ -244,6 +244,7 @@ class Annotations extends React.Component {
   }
 
   async addAnnotations() {
+    console.log("🚀 ~ file: index.jsx ~ line 248 ~ Annotations ~ addAnnotations ~ this.stat", this.stat)
     if (this.state.userAnnotations.length === 0) {
       await this.getAnnotations();
     }
@@ -425,6 +426,10 @@ class Annotations extends React.Component {
         }
       </div>
     )
+  }
+
+  __createAnnotoriousAnnotation(annotation) {
+
   }
 
 }
