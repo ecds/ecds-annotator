@@ -36,7 +36,6 @@ function Manifest(props) {
       let response = await fetch(props.manifest);
       let json = await response.json();
       setData(json);
-      console.log("🚀 ~ file: Manifest.jsx ~ line 39 ~ fetchManifest ~ json", json)
       setThumbnails(
         json.items.map(
           item => item.items.map(
@@ -53,17 +52,14 @@ function Manifest(props) {
     } else if (canvases.length == 0) {
       data.items.forEach(item => {
         if (item.type === 'Canvas') {
-          console.log("🚀 ~ file: Manifest.jsx ~ line 59 ~ useEffect ~ item", item)
           canvases.push(item);
         }
       });
 
       if (!currentCanvas) {
         const pids = canvases.map(canvas => getCanvasPid(canvas.id));
-        console.log("🚀 ~ file: Manifest.jsx ~ line 63 ~ useEffect ~ pids", pids)
         const pidFromPath = getCanvasPid(location.pathname);
         const currentCanvasIndex = pidFromPath ? pids.indexOf(pidFromPath) : 0;
-        console.log("🚀 ~ file: Manifest.jsx ~ line 67 ~ useEffect ~ canvases[currentCanvasIndex]", canvases[currentCanvasIndex])
         setCurrentCanvas(canvases[currentCanvasIndex]);
         setFirstCanvas(canvases[0]);
         setLastCanvas(canvases[canvases.length - 1]);
@@ -90,7 +86,6 @@ function Manifest(props) {
 
   const getCanvasPid = (uri) => {
     const parts = uri.split('/').reverse();
-    console.log("🚀 ~ file: Manifest.jsx ~ line 93 ~ getCanvasPid ~ parts", parts)
 
     if (parts[0] === 'canvas') {
       return parts[1];

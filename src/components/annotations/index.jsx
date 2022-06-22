@@ -302,6 +302,10 @@ class Annotations extends React.Component {
   }
 
   onCreateOrUpdateAnnotation(annotation, arg) {
+    annotation.body.forEach(body => {
+      body.creator = this.props.user;
+    });
+
     switch (arg) {
       case 'create':
         if (this.state.newTextAnnotation) {
