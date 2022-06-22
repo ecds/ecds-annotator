@@ -29,7 +29,7 @@ class Annotations extends React.Component {
     this.baseTextAnno = {
       annotation: {
         type: "Annotation",
-        clone: function() { return this.baseTextAnno.annotation },
+        clone: this.__clone(),
         isEqual: function() { return true },
         body: [
           {
@@ -424,6 +424,10 @@ class Annotations extends React.Component {
         }
       </div>
     )
+  }
+
+  __clone() {
+    return this.baseTextAnno.annotation;
   }
 }
 
