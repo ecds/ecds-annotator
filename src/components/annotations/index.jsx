@@ -30,7 +30,6 @@ class Annotations extends React.Component {
       annotation: {
         type: "Annotation",
         isEqual: function() { return true },
-        clone: function() { return baseTextAnno },
         body: [
           {
             type: "TextualBody",
@@ -56,6 +55,8 @@ class Annotations extends React.Component {
         id: UUID()
       }
     };
+
+    this.baseTextAnno.annotation.clone = function() { return this.baseTextAnno };
 
     this.annotationServer = new AnnotationServer({ token: this.props.token });
 
