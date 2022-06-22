@@ -368,6 +368,7 @@ class Annotations extends React.Component {
   }
 
   createTextAnnotation() {
+    console.log("🚀 ~ file: index.jsx ~ line 376 ~ Annotations ~ createTextAnnotation ~ this.state", this.state.selectedTextAnno)
     let selection = window.getSelection();
     if (!selection.rangeCount) return;
     if (selection.anchorOffset === selection.focusOffset && selection.anchorNode === selection.focusNode) return;
