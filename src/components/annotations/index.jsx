@@ -243,6 +243,7 @@ class Annotations extends React.Component {
     for (const annotation of this.state.userAnnotations) {
       switch (annotation.target.selector.type) {
         case 'SvgSelector':
+        case 'FragmentSelector':
           this.state.anno.addAnnotation(annotation);
           this.__addAnnotationContentOverlay(document.querySelector(`[data-id="${annotation.id}"]`), annotation);
           break;
