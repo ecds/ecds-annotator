@@ -283,6 +283,10 @@ class Annotations extends React.Component {
       body.creator = this.props.user;
     });
 
+    if (this.state.newTextAnnotation) {
+      arg = 'create';
+    }
+
     switch (arg) {
       case 'create':
         if (this.state.newTextAnnotation) {
@@ -421,12 +425,13 @@ class Annotations extends React.Component {
         selector: {}
       },
       "@context": "http://www.w3.org/ns/anno.jsonld",
-      id: UUID()
+      id: UUID(),
+      ...annotation
     };
 
     baseAnno.clone = function() { return baseAnno };
 
-    return { annotation: { ...baseAnno, ...annotation } };
+    return { annotation: baseAnno };
   }
 }
 
