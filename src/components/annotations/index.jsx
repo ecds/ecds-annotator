@@ -26,39 +26,6 @@ class Annotations extends React.Component {
   constructor(props) {
     super(props);
 
-    this.baseTextAnno = {
-      annotation: {
-        type: "Annotation",
-        clone: this.__clone(),
-        isEqual: function() { return true },
-        body: [
-          {
-            type: "TextualBody",
-            value: "",
-            purpose: "commenting",
-            creator: this.props.user
-          }
-        ],
-        bodies: [
-          {
-            type: "TextualBody",
-            value: "",
-            purpose: "commenting",
-            creator: this.props.user
-          }
-        ],
-        target: {
-          type: "RangeSelector",
-          source: this.props.canvas.id,
-          selector: {}
-        },
-        "@context": "http://www.w3.org/ns/anno.jsonld",
-        id: UUID()
-      }
-    };
-
-    // this.baseTextAnno.annotation.clone = function() { return this.baseTextAnno.annotation };
-
     this.annotationServer = new AnnotationServer({ token: this.props.token });
 
     this.canvasEvent = new CustomEvent('canvasswitch', { bubbles: true, detail: {} });
@@ -67,7 +34,7 @@ class Annotations extends React.Component {
       anno: null,
       selectedTextAnnoElement: null,
       newTextAnnotation: null,
-      selectedTextAnno: this.baseTextAnno,
+      selectedTextAnno: this.__baseTextAnno(),
       widgets: [EditorWidget, 'TAG'],
       osdCanvas: document.querySelector(`.${this.props.viewer.canvas.className} div`),
       showAnnotations: false,
@@ -90,6 +57,7 @@ class Annotations extends React.Component {
     this.ocrAdded = this.ocrAdded.bind(this);
     this.getAnnotations = this.getAnnotations.bind(this);
     this.dispatchCanvasSwitch = this.dispatchCanvasSwitch.bind(this);
+    this.__baseTextAnno = this.__baseTextAnno.bind(this);
   }
 
   componentDidMount() {
@@ -120,7 +88,7 @@ class Annotations extends React.Component {
       this.annotationServer.delete(annotation);
       this.setState({
         isAnnotating: false,
-        selectedTextAnno: this.baseTextAnno,
+        selectedTextAnno: this.__baseTextAnno(),
         selectedTextAnnoElement: null
       });
     });
@@ -136,7 +104,7 @@ class Annotations extends React.Component {
     annotorious.on('cancelSelected', (selection) => {
       this.setState({
         isAnnotating: false,
-        selectedTextAnno: this.baseTextAnno,
+        selectedTextAnno: this.__baseTextAnno(),
         selectedTextAnnoElement: null
       });
 
@@ -354,7 +322,7 @@ class Annotations extends React.Component {
 
     this.setState({
       isAnnotating: false,
-      selectedTextAnno: this.baseTextAnno,
+      selectedTextAnno: this.__baseTextAnno(),
       selectedTextAnnoElement: null
     });
   }
@@ -426,8 +394,38 @@ class Annotations extends React.Component {
     )
   }
 
-  __clone() {
-    return this.baseTextAnno.annotation;
+  __baseTextAnno(annotation={}) {
+    let baseAnno = {
+      type: "Annotation",
+      isEqual: function() { return true },
+      body: [
+        {
+          type: "TextualBody",
+          value: "",
+          purpose: "commenting",
+          creator: this.props.user
+        }
+      ],
+      bodies: [
+        {
+          type: "TextualBody",
+          value: "",
+          purpose: "commenting",
+          creator: this.props.user
+        }
+      ],
+      target: {
+        type: "RangeSelector",
+        source: this.props.canvas.id,
+        selector: {}
+      },
+      "@context": "http://www.w3.org/ns/anno.jsonld",
+      id: UUID()
+    };
+
+    baseAnno.clone = function() { return baseAnno };
+
+    return { annotation: { ...baseAnno, ...annotation } };
   }
 }
 
