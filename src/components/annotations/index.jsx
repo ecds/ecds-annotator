@@ -283,13 +283,14 @@ class Annotations extends React.Component {
       body.creator = this.props.user;
     });
 
-    // if (this.state.newTextAnnotation) {
-    //   arg = 'create';
-    // }
+    if (this.state.newTextAnnotation) {
+      arg = 'create';
+    }
+    console.log("🚀 ~ file: index.jsx ~ line 289 ~ Annotations ~ onCreateOrUpdateAnnotation ~ annotation, arg", annotation, arg)
     console.log("🚀 ~ file: index.jsx ~ line 287 ~ Annotations ~ onCreateOrUpdateAnnotation ~ this.state.newTextAnnotation", this.state.newTextAnnotation)
 
     switch (arg) {
-      case 'update':
+      case 'create':
         if (this.state.newTextAnnotation) {
           annotation.target.selector = this.state.newTextAnnotation;
           annotation.resource = annotation.body[0];
@@ -309,7 +310,7 @@ class Annotations extends React.Component {
         }
         this.annotationServer.create(annotation);
         break;
-      case 'create':
+      case 'update':
         this.annotationServer.update(annotation).then(() => {
           if (annotation.target.selector.type == 'SvgSelector') {
             let svg_element = document.querySelector(`[data-id="#${annotation.id}"]`);
