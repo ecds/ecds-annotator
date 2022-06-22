@@ -209,7 +209,7 @@ class Annotations extends React.Component {
   dispatchCanvasSwitch(details={}) {
     const eventDetails = {
       annotationsOnPage: this.state.userAnnotations.length,
-      canvas: this.props.canvas.id.split('/').reverse()[0],
+      canvas: this.getCanvasPid(this.props.canvas.id),
       annotationAdded: false,
       annotationDeleted: false,
       ...details
@@ -219,6 +219,17 @@ class Annotations extends React.Component {
     }
     window.dispatchEvent(this.canvasEvent);
   }
+
+  getCanvasPid(uri) {
+    const parts = uri.split('/').reverse();
+
+    if (parts[0] === 'canvas') {
+      return parts[1];
+    }
+
+    return parts[0];
+  }
+
 
   toggleAnnotations() {
     this.setState({ showAnnotations: !this.state.showAnnotations });
