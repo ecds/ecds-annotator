@@ -294,7 +294,7 @@ class Annotations extends React.Component {
           annotation.target.selector = this.state.newTextAnnotation;
           annotation.resource = annotation.body[0];
           this.setState({ newTextAnnotation: null });
-          new TextAnnotation(annotation);
+          let textAnnotation = new TextAnnotation(annotation);
           this.state.textAnnotations.push(textAnnotation);
         } else {
           annotation.target.source = this.props.canvas.id
