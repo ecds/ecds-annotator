@@ -53,13 +53,14 @@ function Manifest(props) {
     } else if (canvases.length == 0) {
       data.items.forEach(item => {
         if (item.type === 'Canvas') {
+          console.log("🚀 ~ file: Manifest.jsx ~ line 59 ~ useEffect ~ item", item)
           canvases.push(item);
         }
       });
-      console.log("🚀 ~ file: Manifest.jsx ~ line 59 ~ useEffect ~ item", item)
 
       if (!currentCanvas) {
         const pids = canvases.map(canvas => getCanvasPid(canvas.id));
+        console.log("🚀 ~ file: Manifest.jsx ~ line 63 ~ useEffect ~ pids", pids)
         const pidFromPath = getCanvasPid(location.pathname);
         const currentCanvasIndex = pidFromPath ? pids.indexOf(pidFromPath) : 0;
         setCurrentCanvas(canvases[currentCanvasIndex]);
