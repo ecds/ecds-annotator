@@ -399,7 +399,7 @@ class Annotations extends React.Component {
           ocrReady={this.state.ocrReady}
           {...this.props} />
 
-        {(this.state.selectedTextAnnoElement && this.state.selectedTextAnno.annotation) &&
+        {(this.state.selectedTextAnnoElement && this.state.selectedTextAnno.annotation && !this._editor.current) &&
           <Editor
             ref={this._editor}
             detachable
