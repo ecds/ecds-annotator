@@ -169,8 +169,10 @@ class Annotations extends React.Component {
     console.log("🚀 ~ file: index.jsx ~ line 165 ~ Annotations ~ componentDidUpdate ~ this.state", this.state.selectedTextAnno, prevState.selectedTextAnno)
     console.log("🚀 ~ file: index.jsx ~ line 165 ~ Annotations ~ componentDidUpdate ~ this.state", this.state.selectedTextAnnoElement, prevState.selectedTextAnnoElement)
     if (!prevState.showAnnotations && this.state.showAnnotations || !prevState.ocrReady && this.state.ocrReady && this.state.showAnnotations) {
+      console.log("🚀 ~ file: index.jsx ~ line 172 ~ Adding Annotations", this)
       this.addAnnotations();
     } else if (prevState.showAnnotations && !this.state.showAnnotations) {
+      console.log("🚀 ~ file: index.jsx ~ line 172 ~ Clearing Annotations", this)
       this.clearAnnotations();
     }
 
