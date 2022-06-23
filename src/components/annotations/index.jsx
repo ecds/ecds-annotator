@@ -210,7 +210,6 @@ class Annotations extends React.Component {
   }
 
   async addAnnotations() {
-    console.log("🚀 ~ file: index.jsx ~ line 248 ~ Annotations ~ addAnnotations ~ this.stat", this.stat)
     if (this.state.userAnnotations.length === 0) {
       await this.getAnnotations();
     }
@@ -224,7 +223,9 @@ class Annotations extends React.Component {
           break;
         case 'RangeSelector':
           const textAnnotation = new TextAnnotation(annotation, this.props.viewer);
+
           for (const link of textAnnotation.links) {
+            console.log("🚀 ~ file: index.jsx ~ line 227 ~ Annotations ~ addAnnotations ~ textAnnotation.links", textAnnotation.links)
 
             this.__addAnnotationContentOverlay(link.parentNode, annotation, true);
 
