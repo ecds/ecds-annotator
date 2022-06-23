@@ -225,9 +225,10 @@ class Annotations extends React.Component {
           const textAnnotation = new TextAnnotation(annotation, this.props.viewer);
 
           for (const link of textAnnotation.links) {
-            console.log("🚀 ~ file: index.jsx ~ line 227 ~ Annotations ~ addAnnotations ~ textAnnotation.links", textAnnotation.links)
-
-            this.__addAnnotationContentOverlay(link.parentNode, annotation, true);
+            console.log("🚀 ~ file: index.jsx ~ line 227 ~ Annotations ~ addAnnotations ~ textAnnotation.links", link)
+            if(link.parentNode) {
+              this.__addAnnotationContentOverlay(link.parentNode, annotation, true);
+            }
 
             // link.parentNode.addEventListener('mouseleave', () => {
             //   this.props.viewer.setMouseNavEnabled(true);
