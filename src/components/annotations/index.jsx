@@ -282,7 +282,7 @@ class Annotations extends React.Component {
   clearAnnotations() {
     this.state.anno.clearAnnotations();
     this.state.textAnnotations.forEach(textAnno => textAnno.removeLinks());
-    this.setState({ocrReady: false, textAnnotations: [], userAnnotations: [] });
+    this.setState({textAnnotations: [], userAnnotations: [] });
   }
 
   ocrAdded() {
