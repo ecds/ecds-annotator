@@ -223,19 +223,7 @@ class Annotations extends React.Component {
           for (const link of textAnnotation.links) {
             this.__addAnnotationContentOverlay(link, annotation, true);
 
-            // link.parentNode.addEventListener('mouseleave', () => {
-            //   this.props.viewer.setMouseNavEnabled(true);
-            //   textAnnotation.hideAnnotation();
-            // });
-
-            link.parentNode.addEventListener('click', () => {
-              if (!this.state.selectedTextAnnoElement) {
-                this.setState({
-                  selectedTextAnno: textAnnotation,
-                  selectedTextAnnoElement: link
-                });
-              }
-            }, false);
+            this.__addClickToTextAnno(link, textAnnotation);
           }
 
           this.state.textAnnotations.push(textAnnotation);
@@ -249,7 +237,8 @@ class Annotations extends React.Component {
     console.log("🚀 ~ file: index.jsx ~ line 249 ~ Annotations ~ __addAnnotationContentOverlay ~ element", element)
     if (!element.parentNode) {
       setTimeout(() => {
-        element = document.getElementById(element.id);
+        const dataId = element.getAttribute('data-id');
+        element = document.querySelector(`[data-id="${dataId}"]`);
         this.__addAnnotationContentOverlay(element, annotation, disableOSDMouse);
       }, 300);
     } else {
@@ -267,6 +256,27 @@ class Annotations extends React.Component {
           this.props.viewer.setMouseNavEnabled(true);
         }
       }
+    }
+  }
+
+  __addClickToTextAnno(element, textAnnotation) {
+    if (!element.parentNode) {
+      setTimeout(() => {
+        setTimeout(() => {
+          const dataId = element.getAttribute('data-id');
+          element = document.querySelector(`[data-id="${dataId}"]`);
+          this.__addClickToTextAnno(element, textAnnotation);
+        }, 300);
+      })
+    } else {
+      element.parentNode.addEventListener('click', () => {
+        if (!this.state.selectedTextAnnoElement) {
+          this.setState({
+            selectedTextAnno: textAnnotation,
+            selectedTextAnnoElement: element
+          });
+        }
+      }, false);
     }
   }
 
