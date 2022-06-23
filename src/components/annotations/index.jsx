@@ -221,7 +221,7 @@ class Annotations extends React.Component {
           const textAnnotation = new TextAnnotation(annotation, this.props.viewer);
 
           for (const link of textAnnotation.links) {
-            this.__addAnnotationContentOverlay(link.parentNode, annotation, true);
+            this.__addAnnotationContentOverlay(link, annotation, true);
 
             // link.parentNode.addEventListener('mouseleave', () => {
             //   this.props.viewer.setMouseNavEnabled(true);
@@ -247,20 +247,21 @@ class Annotations extends React.Component {
 
   __addAnnotationContentOverlay(element, annotation, disableOSDMouse=false) {
     console.log("🚀 ~ file: index.jsx ~ line 249 ~ Annotations ~ __addAnnotationContentOverlay ~ element", element)
-    if (!element) {
+    if (!element.parentNode) {
       setTimeout(() => {
+        element = document.getElementById(element.id);
         this.__addAnnotationContentOverlay(element, annotation, disableOSDMouse);
       }, 300);
     } else {
       const overlay = new AnnotationContentOverlay(this.props.viewer, annotation);
-      element.onmouseenter = (event) => {
+      element.parentNode.onmouseenter = (event) => {
         overlay.showAnnotation(event);
         if (disableOSDMouse) {
           this.props.viewer.setMouseNavEnabled(false);
         }
       };
 
-      element.onmouseleave = (event) => {
+      element.parentNode.onmouseleave = (event) => {
         overlay.hideAnnotation();
         if (disableOSDMouse) {
           this.props.viewer.setMouseNavEnabled(true);
