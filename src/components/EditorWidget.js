@@ -1,9 +1,6 @@
 import { Jodit } from 'jodit';
 
 const EditorWidget = (props) => {
-  console.log("🚀 ~ file: EditorWidget.js ~ line 4 ~ EditorWidget ~ props", props)
-
-
   const textArea = document.createElement('textarea');
   textArea.id = 'editor';
   const container = document.createElement('div');

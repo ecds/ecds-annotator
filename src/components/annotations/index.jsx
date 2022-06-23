@@ -130,13 +130,9 @@ class Annotations extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    console.log("🚀 ~ file: index.jsx ~ line 165 ~ Annotations ~ componentDidUpdate ~ this.state", this.state.selectedTextAnno, prevState.selectedTextAnno)
-    console.log("🚀 ~ file: index.jsx ~ line 165 ~ Annotations ~ componentDidUpdate ~ this.state", this.state.selectedTextAnnoElement, prevState.selectedTextAnnoElement)
     if (!prevState.showAnnotations && this.state.showAnnotations || !prevState.ocrReady && this.state.ocrReady && this.state.showAnnotations) {
-      console.log("🚀 ~ file: index.jsx ~ line 172 ~ Adding Annotations", this)
       this.addAnnotations();
     } else if (prevState.showAnnotations && !this.state.showAnnotations) {
-      console.log("🚀 ~ file: index.jsx ~ line 172 ~ Clearing Annotations", this)
       this.clearAnnotations();
     }
 
@@ -225,7 +221,7 @@ class Annotations extends React.Component {
           const textAnnotation = new TextAnnotation(annotation, this.props.viewer);
 
           for (const link of textAnnotation.links) {
-            console.log("🚀 ~ file: index.jsx ~ line 227 ~ Annotations ~ addAnnotations ~ textAnnotation.links", link)
+            console.log("🚀 ~ file: index.jsx ~ line 227 ~ Annotations ~ addAnnotations ~ textAnnotation.links", link, link.parentNode, link.parentElement)
             if(link.parentNode) {
               this.__addAnnotationContentOverlay(link.parentNode, annotation, true);
             }
@@ -280,7 +276,6 @@ class Annotations extends React.Component {
   }
 
   onCreateOrUpdateAnnotation(annotation, arg) {
-    console.log("🚀 ~ file: index.jsx ~ line 281 ~ Annotations ~ onCreateOrUpdateAnnotation ~ annotation, arg", annotation, arg)
     annotation.body.forEach(body => {
       body.creator = this.props.user;
     });
@@ -288,8 +283,6 @@ class Annotations extends React.Component {
     if (this.state.newTextAnnotation) {
       arg = 'create';
     }
-    console.log("🚀 ~ file: index.jsx ~ line 289 ~ Annotations ~ onCreateOrUpdateAnnotation ~ annotation, arg", annotation, arg)
-    console.log("🚀 ~ file: index.jsx ~ line 287 ~ Annotations ~ onCreateOrUpdateAnnotation ~ this.state.newTextAnnotation", this.state.newTextAnnotation)
 
     switch (arg) {
       case 'create':
@@ -351,7 +344,6 @@ class Annotations extends React.Component {
   }
 
   createTextAnnotation() {
-    console.log("🚀 ~ file: index.jsx ~ line 376 ~ Annotations ~ createTextAnnotation ~ this.state", this.state.selectedTextAnno)
     let selection = window.getSelection();
     if (!selection.rangeCount) return;
     if (selection.anchorOffset === selection.focusOffset && selection.anchorNode === selection.focusNode) return;
