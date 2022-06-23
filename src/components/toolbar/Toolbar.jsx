@@ -81,7 +81,7 @@ class Toolbar extends React.Component {
             </Tooltip>
           </div>
         }
-        {(this.props.expandTools && this.props.ocrReady) &&
+        {(this.props.expandTools && this.props.ocrReady && Boolean(this.props.user?.id)) &&
           <>
             <div>
               <Tooltip content="Draw a rectangle to add annotation">

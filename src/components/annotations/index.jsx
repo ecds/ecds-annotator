@@ -234,7 +234,6 @@ class Annotations extends React.Component {
   }
 
   __addAnnotationContentOverlay(element, annotation, disableOSDMouse=false) {
-    console.log("🚀 ~ file: index.jsx ~ line 249 ~ Annotations ~ __addAnnotationContentOverlay ~ element", element)
     if (!element.parentNode) {
       setTimeout(() => {
         const dataId = element.getAttribute('data-id');
