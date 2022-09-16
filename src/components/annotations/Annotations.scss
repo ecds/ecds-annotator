@@ -21,6 +21,14 @@ svg.a9s-annotationlayer .a9s-annotation .a9s-inner  {
 
 .rdx-annotation-content {
   width: 20vw;
+
+  section {
+    border-top: solid;
+    color: #595959;
+    font-size: .75rem;
+    font-style: italic;
+    margin: 0.5rem;
+  }
 }
 
 .rdx-annotation-content-show {

@@ -41,10 +41,9 @@ class Toolbar extends React.Component {
   }
 
   selectTool(tool) {
+    this.props.startAnnotation(tool);
     this.setState({ activeTool: tool });
-    if (tool === 'text') {
-      this.props.startTextAnnotation();
-    } else {
+    if (tool !== 'text') {
       this.props.annotorious.setDrawingEnabled(true);
       this.props.annotorious.setDrawingTool(tool);
     }
@@ -68,49 +67,61 @@ class Toolbar extends React.Component {
 
   render() {
     return (
-      <div ref={this.ref} className='Toolbar ml-3 mt-2 w-16'>
+      <div ref={this.ref} className={`Toolbar ml-3 mt-2 w-16 ${this.props.ocrReady ? "" : "not-ready"}`}>
         <div>
           <Tooltip content="Show thumbnails of all pages.">
             <button onClick={() => this.showThumbnails()}><FontAwesomeIcon icon={faTableCells} rotation={90}   /></button>
           </Tooltip>
         </div>
-        {this.props.ocrReady &&
-          <div>
-            <Tooltip content={`${this.props.expandTools ? "Hide" : "Show"} annotations and tools`}>
-              <button onClick={this.toggleTools}><FontAwesomeIcon icon={this.props.expandTools ? faCommentSlash : faComment} /></button>
-            </Tooltip>
-          </div>
-        }
-        {(this.props.expandTools && this.props.ocrReady && Boolean(this.props.user?.id)) &&
+        <div>
+          <Tooltip content={`${this.props.expandTools ? "Hide" : "Show"} annotations and tools`}>
+            <button className="annotation-tool" onClick={this.toggleTools} disabled={!this.props.ocrReady}>
+              <FontAwesomeIcon icon={this.props.expandTools ? faCommentSlash : faComment} />
+            </button>
+          </Tooltip>
+        </div>
+        {(this.props.expandTools && Boolean(this.props.user?.id)) &&
           <>
             <div>
               <Tooltip content="Draw a rectangle to add annotation">
-                <button className={this.state.activeTool === "rect" ? "active": ""} onClick={() => this.selectTool('rect')}><FontAwesomeIcon icon={faVectorSquare} /></button>
+                <button className={`annotation-tool ${this.state.activeTool === "rect" ? "active": ""}`} onClick={() => this.selectTool('rect')} disabled={!this.props.ocrReady}>
+                  <FontAwesomeIcon icon={faVectorSquare} />
+                </button>
               </Tooltip>
             </div>
             <div>
               <Tooltip content="Draw a polygon to add annotation">
-                <button className={this.state.activeTool === "polygon" ? "active": ""} onClick={() => this.selectTool('polygon')}><FontAwesomeIcon icon={faDrawPolygon} /></button>
+                <button className={`annotation-tool ${this.state.activeTool === "polygon" ? "active": ""}`} onClick={() => this.selectTool('polygon')} disabled={!this.props.ocrReady}>
+                  <FontAwesomeIcon icon={faDrawPolygon} />
+                </button>
               </Tooltip>
             </div>
             <div>
               <Tooltip content="Draw a circle to add annotation">
-                <button className={this.state.activeTool === "circle" ? "active": ""} onClick={() => this.selectTool('circle')}><FontAwesomeIcon icon={faCircle} /></button>
+                <button className={`annotation-tool ${this.state.activeTool === "circle" ? "active": ""}`} onClick={() => this.selectTool('circle')} disabled={!this.props.ocrReady}>
+                  <FontAwesomeIcon icon={faCircle} />
+                </button>
               </Tooltip>
             </div>
             <div>
               <Tooltip content="Freehand annotation">
-                <button className={this.state.activeTool === "freehand" ? "active": ""} onClick={() => this.selectTool('freehand')}><MdGesture /></button>
+                <button className={`annotation-tool ${this.state.activeTool === "freehand" ? "active": ""}`} onClick={() => this.selectTool('freehand')} disabled={!this.props.ocrReady}>
+                  <MdGesture />
+                </button>
               </Tooltip>
             </div>
             <div>
               <Tooltip content="Annotate a point">
-                <button className={this.state.activeTool === "point" ? "active": ""} onClick={() => this.selectTool('point')}><FontAwesomeIcon icon={faLocationPin} /></button>
+                <button className={`annotation-tool ${this.state.activeTool === "point" ? "active": ""}`} onClick={() => this.selectTool('point')} disabled={!this.props.ocrReady}>
+                  <FontAwesomeIcon icon={faLocationPin} />
+                </button>
               </Tooltip>
             </div>
             <div>
               <Tooltip content="Select text to annotate">
-                <button className={this.state.activeTool === "text" ? "active": ""} onClick={() => this.selectTool('text')}><FontAwesomeIcon icon={faICursor} /></button>
+                <button className={`annotation-tool ${this.state.activeTool === "text" ? "active": ""}`} onClick={() => this.selectTool('text')} disabled={!this.props.ocrReady}>
+                  <FontAwesomeIcon icon={faICursor} />
+                </button>
               </Tooltip>
             </div>
           </>

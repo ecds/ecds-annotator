@@ -1,23 +1,18 @@
 import React from 'react';
-// import Annotorious from '@recogito/annotorious-openseadragon/src';
 import * as Annotorious from '@recogito/annotorious-openseadragon';
 import SelectorPack from "@recogito/annotorious-selector-pack";
 import BetterPolygon from '@recogito/annotorious-better-polygon';
 import ShapeLabelsFormatter from '@recogito/annotorious-shape-labels';
 import { Editor } from '@recogito/recogito-client-core';
-// import JoditEditorWidget from 'annotorious-jodit-widget/src';
-import EditorWidget from '../EditorWidget';
+import EditorWidget from './EditorWidget';
+import LanguageWidget from './LanguageWidget';
 import Toolbar from '../toolbar/Toolbar';
-// import OCR from '../ocr/OCR';
 import OCR from './OCR';
-
 import data from '../../annotations';
-
 import TextAnnotation from './TextAnnotation';
 import AnnotationContentOverlay from './AnnotationContentOverlay';
 import { UUID } from '../../utils/UUID';
 import AnnotationServer from '../../utils/AnnotationServer';
-
 import './Annotations.scss';
 import '@recogito/annotorious/dist/annotorious.min.css';
 import 'jodit/build/jodit.es2018.min.css';
@@ -41,14 +36,15 @@ class Annotations extends React.Component {
       userAnnotations: [],
       textAnnotations: [],
       ocrReady: false,
-      isAnnotating: false
+      isAnnotating: false,
+      overlayElement: null
     };
 
     this._editor = React.createRef();
     this.onCreateOrUpdateAnnotation = this.onCreateOrUpdateAnnotation.bind(this);
     this.onDeleteAnnotation = this.onDeleteAnnotation.bind(this);
     this.onCancelAnnotation = this.onCancelAnnotation.bind(this);
-    this.startTextAnnotation = this.startTextAnnotation.bind(this);
+    this.startAnnotation = this.startAnnotation.bind(this);
     this.createTextAnnotation = this.createTextAnnotation.bind(this);
     this.toggleAnnotations = this.toggleAnnotations.bind(this);
     this.addAnnotations = this.addAnnotations.bind(this);
@@ -91,11 +87,21 @@ class Annotations extends React.Component {
         selectedTextAnno: this.__baseTextAnno(),
         selectedTextAnnoElement: null
       });
+      this.state.overlayElement.style.display = 'initial';
     });
 
-    // annotorious.on('clickAnnotation', (annotation, element) => {
-    //
-    // });
+    annotorious.on('clickAnnotation', (annotation, element) => {
+      // const overlay = new AnnotationContentOverlay(this.props.viewer, annotation);
+      annotation.contentOverlay.hideAnnotation();
+    });
+
+    annotorious.on('mouseEnterAnnotation', (annotation, element) => {
+      annotation.contentOverlay.showAnnotation(element);
+    });
+
+    annotorious.on('mouseLeaveAnnotation', (annotation, element) => {
+      annotation.contentOverlay.hideAnnotation();
+    });
 
     annotorious.on('startSelection', (selection) => {
       this.setState({ isAnnotating: true });
@@ -108,29 +114,20 @@ class Annotations extends React.Component {
         selectedTextAnnoElement: null
       });
 
-      switch (selection.target.selector.type) {
-        case 'SvgSelector':
-          this.__addAnnotationContentOverlay(document.querySelector(`[data-id="${selection.id}"]`), selection);
-          break;
-        case 'RangeSelector':
-          //
-          break;
-      }
-
+      this.state.overlayElement.style.display = 'initial';
     });
-
-
-    // annotorious.on('selectAnnotation', (annotation, element) => {
-
-    // });
 
     this.getAnnotations();
 
     this.setState({ anno: annotorious });
+    console.log("🚀 ~ file: index.jsx ~ line 123 ~ Annotations ~ componentDidMount ~ annotorious", annotorious)
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (!prevState.showAnnotations && this.state.showAnnotations || !prevState.ocrReady && this.state.ocrReady && this.state.showAnnotations) {
+    if (
+      !prevState.showAnnotations && this.state.showAnnotations ||
+      !prevState.ocrReady && this.state.ocrReady && this.state.showAnnotations
+    ) {
       this.addAnnotations();
     } else if (prevState.showAnnotations && !this.state.showAnnotations) {
       this.clearAnnotations();
@@ -140,6 +137,14 @@ class Annotations extends React.Component {
       this.onCanvasChange();
     }
 
+    if (
+      !prevState.showAnnotations && this.state.showAnnotations &&
+      prevState.userAnnotations.length === 0 &&
+      this.state.userAnnotations.length > 0
+    ) {
+      this.addAnnotations();
+    }
+
     this.dispatchCanvasSwitch();
   }
 
@@ -147,16 +152,18 @@ class Annotations extends React.Component {
     const userAnnotations = [];
 
     for (const annotationPage of this.props.canvas.annotations) {
-      if (annotationPage.id.endsWith('ocr')) {
-        new OCR({ url: annotationPage.id, viewer: this.props.viewer, ocrAdded: this.ocrAdded });
-      } else {
+      if (annotationPage.id.endsWith('ocr') && !this.state.ocrReady) {
+        const ocrOptions = { url: annotationPage.id, viewer: this.props.viewer, ocrAdded: this.ocrAdded }
+        const ocr = new OCR(ocrOptions);
+        await ocr.overlayOCR();
+      } else if (!annotationPage.id.endsWith('ocr')) {
         if (this.props.localEnv === 'dev') {
-          for (const annotation of data.items) {
+          for await (const annotation of data.items) {
             userAnnotations.push(annotation);
           }
         } else {
           const annotations = await this.annotationServer.get(annotationPage.id);
-          for (const annotation of annotations.items) {
+          for await (const annotation of annotations.items) {
             userAnnotations.push(annotation);
           }
         }
@@ -164,16 +171,56 @@ class Annotations extends React.Component {
     }
 
     if (userAnnotations.length > 0) {
-      this.setState({ userAnnotations });
+      if (this.state.showAnnotations) {
+        this.setState({ userAnnotations }, this.addAnnotations);
+      } else {
+        this.setState({ userAnnotations });
+      }
     } else {
       this.setState({ userAnnotations: [] });
     }
   }
 
-  onCanvasChange() {
+  async addAnnotations() {
+    if (!this.state.showAnnotations) return;
+
+    for (const annotation of this.state.userAnnotations) {
+      annotation.contentOverlay = new AnnotationContentOverlay(this.props.viewer, annotation);
+      switch (annotation.target.selector.type) {
+        case 'SvgSelector':
+        case 'FragmentSelector':
+          this.state.anno.addAnnotation(annotation);
+          break;
+        case 'RangeSelector':
+          const textAnnotation = new TextAnnotation(annotation, this.props.viewer);
+          await textAnnotation.addLinks();
+          textAnnotation.addContentOverlays();
+
+          for (const link of textAnnotation.links) {
+            this.__addAnnotationContentOverlay(link, annotation, true);
+
+            this.__addClickToTextAnno(link, textAnnotation);
+          }
+
+          this.state.textAnnotations.push(textAnnotation);
+
+          break;
+      }
+    }
+  }
+
+  async onCanvasChange() {
     this.clearAnnotations();
     this.props.viewer.clearOverlays();
-    this.getAnnotations();
+    this.clearAnnotations();
+    await this.setState(
+      {
+        userAnnotations: [],
+        textAnnotations:[],
+        ocrReady: false
+      }
+    );
+    await this.getAnnotations();
   }
 
   dispatchCanvasSwitch(details={}) {
@@ -200,37 +247,8 @@ class Annotations extends React.Component {
     return parts[0];
   }
 
-
   toggleAnnotations() {
     this.setState({ showAnnotations: !this.state.showAnnotations });
-  }
-
-  async addAnnotations() {
-    if (this.state.userAnnotations.length === 0) {
-      await this.getAnnotations();
-    }
-
-    for (const annotation of this.state.userAnnotations) {
-      switch (annotation.target.selector.type) {
-        case 'SvgSelector':
-        case 'FragmentSelector':
-          this.state.anno.addAnnotation(annotation);
-          this.__addAnnotationContentOverlay(document.querySelector(`[data-id="${annotation.id}"]`), annotation);
-          break;
-        case 'RangeSelector':
-          const textAnnotation = new TextAnnotation(annotation, this.props.viewer);
-
-          for (const link of textAnnotation.links) {
-            this.__addAnnotationContentOverlay(link, annotation, true);
-
-            this.__addClickToTextAnno(link, textAnnotation);
-          }
-
-          this.state.textAnnotations.push(textAnnotation);
-
-          break;
-      }
-    }
   }
 
   __addAnnotationContentOverlay(element, annotation, disableOSDMouse=false) {
@@ -241,20 +259,6 @@ class Annotations extends React.Component {
         this.__addAnnotationContentOverlay(element, annotation, disableOSDMouse);
       }, 300);
     } else {
-      const overlay = new AnnotationContentOverlay(this.props.viewer, annotation);
-      element.parentNode.onmouseenter = (event) => {
-        overlay.showAnnotation(event);
-        if (disableOSDMouse) {
-          this.props.viewer.setMouseNavEnabled(false);
-        }
-      };
-
-      element.parentNode.onmouseleave = (event) => {
-        overlay.hideAnnotation();
-        if (disableOSDMouse) {
-          this.props.viewer.setMouseNavEnabled(true);
-        }
-      }
     }
   }
 
@@ -268,7 +272,7 @@ class Annotations extends React.Component {
         }, 300);
       })
     } else {
-      element.parentNode.addEventListener('click', () => {
+      element.addEventListener('click', (event) => {
         if (!this.state.selectedTextAnnoElement) {
           this.setState({
             selectedTextAnno: textAnnotation,
@@ -282,14 +286,17 @@ class Annotations extends React.Component {
   clearAnnotations() {
     this.state.anno.clearAnnotations();
     this.state.textAnnotations.forEach(textAnno => textAnno.removeLinks());
-    this.setState({textAnnotations: [], userAnnotations: [] });
+    // this.setState({textAnnotations: [], userAnnotations: [] });
   }
 
-  ocrAdded() {
-    this.setState({ ocrReady: true });
+  ocrAdded(overlayElement) {
+    this.setState({
+      ocrReady: true,
+      overlayElement
+    });
   }
 
-  onCreateOrUpdateAnnotation(annotation, arg) {
+  async onCreateOrUpdateAnnotation(annotation, arg) {
     annotation.body.forEach(body => {
       body.creator = this.props.user;
     });
@@ -304,7 +311,9 @@ class Annotations extends React.Component {
           annotation.target.selector = this.state.newTextAnnotation;
           annotation.resource = annotation.body[0];
           this.setState({ newTextAnnotation: null });
-          let textAnnotation = new TextAnnotation(annotation);
+          let textAnnotation = new TextAnnotation(annotation, this.props.viewer);
+          await textAnnotation.addLinks();
+          textAnnotation.addContentOverlays();
           this.state.textAnnotations.push(textAnnotation);
         } else {
           annotation.target.source = this.props.canvas.id
@@ -317,30 +326,33 @@ class Annotations extends React.Component {
             };
           }
         }
-        this.annotationServer.create(annotation);
+        await this.annotationServer.create(annotation);
         break;
       case 'update':
-        this.annotationServer.update(annotation).then(() => {
-          if (annotation.target.selector.type == 'SvgSelector') {
-            let svg_element = document.querySelector(`[data-id="#${annotation.id}"]`);
-            // this.__addAnnotationContentOverlay(`[data-id="${annotation.id}"]`, annotation);
-            this.__addAnnotationContentOverlay(svg_element, annotation);
-          } else {
-            const links = document.querySelectorAll(`[data-id="#${annotation.id}"]`);
+        delete annotation.contentOverlay;
+        await this.annotationServer.update(annotation)
+        if (annotation.target.selector.type == 'SvgSelector') {
+          let svg_element = document.querySelector(`[data-id="#${annotation.id}"]`);
+          // this.__addAnnotationContentOverlay(`[data-id="${annotation.id}"]`, annotation);
+          // this.__addAnnotationContentOverlay(svg_element, annotation);
+        } else {
+          const links = document.querySelectorAll(`[data-id="#${annotation.id}"]`);
 
-            for (const link of links) {
-              this.__addAnnotationContentOverlay(link.parentNode, annotation, true);
-            }
+          for (const link of links) {
+            this.__addAnnotationContentOverlay(link.parentNode, annotation, true);
           }
-        });
+        }
         break
     }
+
+    annotation.contentOverlay = new AnnotationContentOverlay(this.props.viewer, annotation);
 
     this.setState({
       isAnnotating: false,
       selectedTextAnno: this.__baseTextAnno(),
       selectedTextAnnoElement: null
     });
+    this.state.overlayElement.style.display = 'initial';
   }
 
   onDeleteAnnotation(event) {
@@ -351,17 +363,23 @@ class Annotations extends React.Component {
     this.setState({ selectedTextAnnoElement: null });
   }
 
-  startTextAnnotation() {
-    this.props.viewer.setMouseNavEnabled(false);
-    this.state.osdCanvas.style.zIndex = 999;
-    this.state.osdCanvas.addEventListener('mouseup', this.createTextAnnotation);
+  startAnnotation(tool) {
+    if (tool === 'text') {
+      this.props.viewer.setMouseNavEnabled(false);
+      this.state.osdCanvas.style.zIndex = 999;
+      this.state.osdCanvas.addEventListener('mouseup', this.createTextAnnotation);
+    } else {
+      this.state.overlayElement.style.display = 'none';
+    }
   }
 
-  createTextAnnotation() {
+  async createTextAnnotation() {
     let selection = window.getSelection();
     if (!selection.rangeCount) return;
     if (selection.anchorOffset === selection.focusOffset && selection.anchorNode === selection.focusNode) return;
     const newTextAnnotation = new TextAnnotation(selection.getRangeAt(0));
+    // await newTextAnnotation.addLinks();
+    // newTextAnnotation.addContentOverlays();
     this.state.osdCanvas.removeEventListener('mouseup', this.createTextAnnotation);
     this.state.osdCanvas.style.zIndex = '';
     this.setState(
@@ -383,7 +401,7 @@ class Annotations extends React.Component {
           annotorious={this.state.anno}
           expandTools={this.state.showAnnotations}
           toggleTools={this.toggleAnnotations}
-          startTextAnnotation={this.startTextAnnotation}
+          startAnnotation={this.startAnnotation}
           isAnnotating={this.state.isAnnotating}
           ocrReady={this.state.ocrReady}
           {...this.props} />

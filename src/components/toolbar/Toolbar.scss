@@ -7,12 +7,23 @@
   top: 0;
 
   button {
+    opacity: 1;
     padding-left: .25rem;
     padding-right: .25rem;
 
     &.active {
       background-color: white;
       color: black;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  &.not-ready {
+    .annotation-tool {
+      opacity: .5;
     }
   }
 }

@@ -15,7 +15,7 @@ class AnnotationServer {
     };
 
     if (request.method !== 'GET') {
-      request.body = JSON.stringify(annotation);
+      request.body = typeof(annotation) === 'string' ? annotation : JSON.stringify(annotation);
     }
 
     const response = await fetch(
@@ -41,16 +41,19 @@ class AnnotationServer {
   async create(annotation, path='/annotations-crud/') {
     annotation.id = annotation.id.replace('#', '');
     const response =  await this.makeRequest(annotation, 'post', path);
+    annotation.id = `#${annotation.id}`;
   }
 
   async update(annotation, path='/annotations-crud/') {
     annotation.id = annotation.id.replace('#', '');
     const response =  await this.makeRequest(annotation, 'put', path);
+    annotation.id = `#${annotation.id}`;
   }
 
   async delete(annotation, path='/annotations-crud/') {
     annotation.id = annotation.id.replace('#', '');
     const response =  await this.makeRequest(annotation, 'delete', path);
+    annotation.id = `#${annotation.id}`;
   }
 
 }

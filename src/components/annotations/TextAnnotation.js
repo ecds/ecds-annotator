@@ -1,5 +1,6 @@
 import { UUID } from '../../utils/UUID';
 import OpenSeadragon from 'openseadragon';
+import AnnotationContentOverlay from './AnnotationContentOverlay';
 
 class TextAnnotation {
   constructor(annotation, viewer) {
@@ -58,8 +59,24 @@ class TextAnnotation {
       this.endOffset = selector.endSelector.refinedBy.end;
 
       this.links = [];
+    }
+  }
 
-      this.addLinks();
+  addContentOverlays() {
+    for (const link of this.links) {
+      const overlay = new AnnotationContentOverlay(this.viewer, this.annotation);
+      //
+      // DISABLE OSD MOUSE NAV
+      //
+      link.onmouseenter = (event) => {
+        this.viewer.setMouseNavEnabled(false);
+        overlay.showAnnotation(link, event);
+      };
+
+      link.onmouseleave = (event) => {
+        this.viewer.setMouseNavEnabled(true);
+        overlay.hideAnnotation();
+      }
     }
   }
 
@@ -105,24 +122,19 @@ class TextAnnotation {
     return siblings;
   }
 
-  removeLinks() {
+removeLinks() {
     try {
-      this.links.forEach(link => link.parentElement.innerHTML = link.parentElement.innerText);
-    } catch {
-      // break;
+      for (let link of this.links) {
+        link = document.querySelector(`[data-id="${this.annotation.id}"]`);
+        console.log(link);
+        link.parentElement.innerHTML = link.parentElement.innerText
+      }
+    } catch (error) {
+      // console.error(error);
     }
   }
 
-  __create_link() {
-    const link = document.createElement('button');
-    link.setAttribute('role', 'link');
-    link.setAttribute('data-id', this.id);
-    link.className = `rdx-text-anno anno-${this.id}`;
-    this.links.push(link);
-    return link;
-  }
-
-  addLinks() {
+  async addLinks() {
     if (this.range.length === 1) {
       this.__handlePart();
     } else {
@@ -134,7 +146,16 @@ class TextAnnotation {
       link.innerText = wordSpan.innerText;
       wordSpan.innerText = '';
       wordSpan.append(link);
-    })
+    });
+  }
+
+  __create_link() {
+    const link = document.createElement('button');
+    link.setAttribute('role', 'link');
+    link.setAttribute('data-id', this.id);
+    link.className = `rdx-text-anno anno-${this.id}`;
+    this.links.push(link);
+    return link;
   }
 
   __handlePart() {

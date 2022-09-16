@@ -8,11 +8,12 @@ class OCR {
     this.ocrAnnotations = null;
     this.containerElement = document.createElement('div');
     this.props.viewer.canvas.appendChild(this.containerElement);
-    this.overlayOCR()
   }
 
   async overlayOCR() {
     await this.fetchOCR();
+
+    let el = null;
 
     await this.ocrAnnotations.forEach((word) => {
       let location = word.target.selector.value
@@ -22,7 +23,7 @@ class OCR {
           return parseInt(i);
         });
 
-      let el = document.getElementById(word['id'].replace('#', ''));
+      el = document.getElementById(word['id'].replace('#', ''));
 
       //           el.addEventListener("mouseover", () => {
       //             // alert("hello");
@@ -120,7 +121,7 @@ class OCR {
       this.ocrOverlays.push(ocrOverlay);
     });
 
-    this.props.ocrAdded();
+    this.props.ocrAdded(el.parentElement);
   }
 
   async fetchOCR() {
