@@ -105,7 +105,7 @@ class TextAnnotation {
     let siblings = [this.start];
 
     // Get the next sibling element
-    let elem = this.start.nextElementSibling;
+    let elem = this.start?.nextElementSibling;
 
     // As long as a sibling exists
     if (this.start !== this.end) {

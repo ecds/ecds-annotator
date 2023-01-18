@@ -120,7 +120,6 @@ class Annotations extends React.Component {
     this.getAnnotations();
 
     this.setState({ anno: annotorious });
-    console.log("🚀 ~ file: index.jsx ~ line 123 ~ Annotations ~ componentDidMount ~ annotorious", annotorious)
   }
 
   componentDidUpdate(prevProps, prevState) {

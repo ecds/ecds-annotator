@@ -59,6 +59,7 @@ function Manifest(props) {
       if (!currentCanvas) {
         const pids = canvases.map(canvas => getCanvasPid(canvas.id));
         const pidFromPath = getCanvasPid(location.pathname);
+        setShowAll(pidFromPath === 'all');
         const currentCanvasIndex = pidFromPath ? pids.indexOf(pidFromPath) : 0;
         setCurrentCanvas(canvases[currentCanvasIndex]);
         setFirstCanvas(canvases[0]);
@@ -121,7 +122,7 @@ function Manifest(props) {
               return (
                 <div className='p-4 rdx-thumbnail' key={index}>
                   <button onClick={() => goToCanvas(index)}>
-                    <img src={`${thumbnail.id}/full/200,/0/default.jpg`} />
+                    <img src={`${thumbnail.id}/full/200,/0/default.jpg`} alt={`Page ${index + 1}`} />
                     <p className='flex justify-center'>{index + 1}</p>
                   </button>
                 </div>
