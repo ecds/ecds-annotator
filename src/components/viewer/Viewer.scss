@@ -17,4 +17,9 @@
   div {
     position: absolute !important;
   }
+
+  svg {
+    min-width: 10px;
+    min-height: 10px;
+  }
 }

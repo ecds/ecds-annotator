@@ -19,6 +19,7 @@ import './index.scss';
 
 class ECDSAnnotator {
   constructor(conf) {
+    console.log('2/9/2023');
     this.annotationServer = new AnnotationServer({
       host: conf.host,
       token: conf.token

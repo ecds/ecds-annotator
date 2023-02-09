@@ -4,7 +4,7 @@ class AnnotationContentOverlay {
   constructor(viewer, annotation) {
     this.viewer = viewer;
     this.annotation = annotation;
-    this.comment = this.annotation.body.find(b => b.purpose == 'commenting').value;
+    this.comment = this.annotation.body.find(b => b.purpose == 'commenting')?.value;
     this.tags = this.annotation.body.filter(b => b.purpose == 'tagging');
     this.annotationOverlay = document.createElement('div');
     this.annotationOverlay.setAttribute('role', 'dialog');
@@ -23,9 +23,6 @@ class AnnotationContentOverlay {
   }
 
   showAnnotation(element, event) {
-    console.log("🚀 ~ file: AnnotationContentOverlay.js ~ line 28 ~ AnnotationContentOverlay ~ showAnnotation ~ element, event", element, event)
-    // const element = document.querySelector(`[data-id="${annotation.id}"]`)
-
     if (element.tagName === 'BUTTON') {
       let { x, y } = this.viewer.getOverlayById(element.parentElement).position;
 
