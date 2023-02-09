@@ -151,19 +151,19 @@ function Manifest(props) {
 
   if (showAll && thumbnails) {
     return (
-      <div className="flex flex-wrap justify-center overflow-auto">
+      <div className="flex flex-wrap justify-center overflow-auto items-end">
           {
             thumbnails.map((thumbnail, index) => {
               const userAnnotationCount = userAnnotations.filter(a => a.target.source === thumbnail.id).length
               return (
                 <div className='p-4 rdx-thumbnail' key={index}>
-                  <button onClick={() => goToCanvas(index)}>
                     {userAnnotationCount > 0 && (
-                      <span className='fa-layers fa-fw relative top-4 left-[45%] text-3xl'>
+                      <div className='fa-layers fa-fw relative top-4 left-[85%] text-3xl block'>
                         <FontAwesomeIcon icon={faComment} size="9x" style={{ color: "var(--link-color)" }} />
                         <span class="fa-layers-text fa-inverse text-base">{userAnnotationCount}</span>
-                      </span>
+                      </div>
                     )}
+                  <button onClick={() => goToCanvas(index)}>
                     <img src={`${thumbnail.id}/full/200,/0/default.jpg`} alt={`Page ${index + 1}`} />
                     <p className='flex justify-center'>
                       {index + 1}
