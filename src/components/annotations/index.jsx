@@ -150,6 +150,8 @@ class Annotations extends React.Component {
   async getAnnotations() {
     const userAnnotations = [];
 
+    const ocrPages = this.props.canvas.annotations.filter(page => page.id.endsWith('ocr'))?.length;
+
     for (const annotationPage of this.props.canvas.annotations) {
       if (annotationPage.id.endsWith('ocr') && !this.state.ocrReady) {
         const ocrOptions = { url: annotationPage.id, viewer: this.props.viewer, ocrAdded: this.ocrAdded }
@@ -289,10 +291,8 @@ class Annotations extends React.Component {
   }
 
   ocrAdded(overlayElement) {
-    this.setState({
-      ocrReady: true,
-      overlayElement
-    });
+    if (overlayElement) this.setState({ overlayElement });
+    this.setState({ ocrReady: true });
   }
 
   async onCreateOrUpdateAnnotation(annotation, arg) {

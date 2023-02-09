@@ -130,6 +130,8 @@ class OCR {
 
     this.ocrAnnotations = data.items;
 
+    if (data.items.length === 0) this.props.ocrAdded();
+
     await data.items.forEach((item) => {
       this.containerElement.innerHTML += item.body[0].value;
     });
