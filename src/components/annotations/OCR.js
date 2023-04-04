@@ -121,7 +121,8 @@ class OCR {
       this.ocrOverlays.push(ocrOverlay);
     });
 
-    if (el?.parentElement) this.props.ocrAdded(el.parentElement);
+    // if (el?.parentElement) this.props.ocrAdded(el.parentElement);
+    this.props.ocrAdded();
   }
 
   async fetchOCR() {

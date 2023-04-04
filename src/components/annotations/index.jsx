@@ -87,7 +87,7 @@ class Annotations extends React.Component {
         selectedTextAnno: this.__baseTextAnno(),
         selectedTextAnnoElement: null
       });
-      this.state.overlayElement.style.display = 'initial';
+      this.props.viewer.overlaysContainer.style.display = 'initial';
     });
 
     annotorious.on('clickAnnotation', (annotation, element) => {
@@ -114,7 +114,7 @@ class Annotations extends React.Component {
         selectedTextAnnoElement: null
       });
 
-      this.state.overlayElement.style.display = 'initial';
+      this.props.viewer.overlaysContainer.style.display = 'initial';
     });
 
     this.getAnnotations();
@@ -290,8 +290,13 @@ class Annotations extends React.Component {
     // this.setState({textAnnotations: [], userAnnotations: [] });
   }
 
-  ocrAdded(overlayElement) {
-    if (overlayElement) this.setState({ overlayElement });
+  // ocrAdded(overlayElement) {
+  //   if (overlayElement) this.setState({ overlayElement });
+  //   this.setState({ ocrReady: true });
+  // }
+
+  ocrAdded() {
+    // if (overlayElement) this.setState({ overlayElement });
     this.setState({ ocrReady: true });
   }
 
@@ -351,7 +356,7 @@ class Annotations extends React.Component {
       selectedTextAnno: this.__baseTextAnno(),
       selectedTextAnnoElement: null
     });
-    this.state.overlayElement.style.display = 'initial';
+    this.props.viewer.overlaysContainer.style.display = 'initial';
   }
 
   onDeleteAnnotation(event) {
@@ -368,7 +373,7 @@ class Annotations extends React.Component {
       this.state.osdCanvas.style.zIndex = 999;
       this.state.osdCanvas.addEventListener('mouseup', this.createTextAnnotation);
     } else {
-      this.state.overlayElement.style.display = 'none';
+      this.props.viewer.overlaysContainer.style.display = 'none';
     }
   }
 
