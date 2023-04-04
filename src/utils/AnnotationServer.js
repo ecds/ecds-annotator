@@ -8,6 +8,7 @@ class AnnotationServer {
   }
 
   async makeRequest(annotation, method, path) {
+    console.log("🚀 ~ file: AnnotationServer.js:11 ~ AnnotationServer ~ makeRequest ~ annotation:", annotation)
     const url = path.startsWith('http') ? path : `${this.host}${path}`;
     const request = {
       method: method.toUpperCase(),
@@ -52,6 +53,7 @@ class AnnotationServer {
 
   async delete(annotation, path='/annotations-crud/') {
     annotation.id = annotation.id.replace('#', '');
+    annotation.contentOverlay = undefined;
     const response =  await this.makeRequest(annotation, 'delete', path);
     annotation.id = `#${annotation.id}`;
   }
