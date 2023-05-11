@@ -1,65 +1,51 @@
-import { UUID } from '../../utils/UUID';
+/* eslint-disable no-param-reassign */
 import OpenSeadragon from 'openseadragon';
+import { UUID } from '../../utils/UUID';
 import AnnotationContentOverlay from './AnnotationContentOverlay';
 
 class TextAnnotation {
-  constructor(annotation, viewer) {
-    if (annotation instanceof Range) {
-      return {
-        "type": "RangeSelector",
-        startSelector: {
-            "type": "XPathSelector",
-            value: `//*[@id='${annotation.startContainer.parentElement.id}']`,
-            refinedBy : {
-                "type": "TextPositionSelector",
-                start: annotation.startOffset
-            }
-        },
-        endSelector: {
-            "type": "XPathSelector",
-            value: `//*[@id='${annotation.endContainer.parentElement.id}']`,
-            refinedBy : {
-                "type": "TextPositionSelector",
-                end: annotation.endOffset
-            }
-        }
-      }
-    } else {
-      annotation.clone = function() { return annotation };
-      annotation.isEqual = function() { return true };
-      annotation.bodies = annotation.body;
-      this.annotation = annotation;
-      this.viewer = viewer;
+  constructor(annotation, viewer, selectedTextAnno) {
+    this.annotation = annotation;
+    this.annotation.clone = () => annotation;
+    this.annotation.isEqual = () => true;
+    this.annotation.bodies = annotation.body;
+    this.viewer = viewer;
+    this.selectedTextAnno = selectedTextAnno;
 
-      this.annotationOverlay = null;
+    this.annotationOverlay = null;
 
-      const selector = annotation.target.selector;
+    const { selector } = annotation.target;
 
-      this.id = annotation.id || UUID();
+    this.id = annotation.id || UUID();
 
-      this.start = document.evaluate(
-        selector.startSelector.value,
-        document,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      ).singleNodeValue;
+    this.start = document.evaluate(
+      selector.startSelector.value,
+      document,
+      null,
+      XPathResult.FIRST_ORDERED_NODE_TYPE,
+      null,
+    ).singleNodeValue;
 
-      this.end = document.evaluate(
-        selector.endSelector.value,
-        document,
-        null,
-        XPathResult.FIRST_ORDERED_NODE_TYPE,
-        null
-      ).singleNodeValue;
+    this.end = document.evaluate(
+      selector.endSelector.value,
+      document,
+      null,
+      XPathResult.FIRST_ORDERED_NODE_TYPE,
+      null,
+    ).singleNodeValue;
 
-      this.range = this.__getRange();
+    this.range = this.getRange();
 
-      this.startOffset = selector.startSelector.refinedBy.start;
-      this.endOffset = selector.endSelector.refinedBy.end;
+    this.startOffset = selector.startSelector.refinedBy.start;
+    this.endOffset = selector.endSelector.refinedBy.end;
 
-      this.links = [];
-    }
+    this.links = [];
+  }
+
+  updateAnnotation(updatedAnnotation) {
+    this.annotation = updatedAnnotation;
+    this.addContentOverlays();
+    this.addEditOverlay();
   }
 
   addContentOverlays() {
@@ -73,36 +59,44 @@ class TextAnnotation {
         overlay.showAnnotation(link, event);
       };
 
-      link.onmouseleave = (event) => {
+      link.onmouseleave = (/* event */) => {
         this.viewer.setMouseNavEnabled(true);
         overlay.hideAnnotation();
-      }
+      };
     }
   }
 
-  showAnnotation(event) {
-    // const content = document.createElement('div');
-    // content.className = 'rdx-annotation-content';
-    // content.innerHTML = firstComment.value;
-    // const { x, y } = this.viewer.getOverlayById(event.target).location;
-    // this.__createOverlay(x, y);
-    // const y = event.screenY;
-    // const x = event.screenX;
+  addEditOverlay() {
+    this.links.forEach((link) => {
+      link.addEventListener('click', () => {
+        this.selectedTextAnno(this, link);
+      });
+    });
   }
+
+  // showAnnotation(event) {
+  //   const content = document.createElement('div');
+  //   content.className = 'rdx-annotation-content';
+  //   content.innerHTML = firstComment.value;
+  //   const { x, y } = this.viewer.getOverlayById(event.target).location;
+  //   this.createOverlay(x, y);
+  //   const y = event.screenY;
+  //   const x = event.screenX;
+  // }
 
   hideAnnotation() {
     this.viewer.removeOverlay(this.annotationOverlay);
   }
 
-  /*!
-  * Get all following siblings of each element up to but not including the element matched by the selector
-  * Adapted from Chris Ferdinandi https://vanillajstoolkit.com/helpers/nextuntil/
-  * @return {Array}           The siblings
-  */
-  __getRange() {
-
+  /*
+   * Get all following siblings of each element up to but not including
+   * the element matched by the selector
+   * Adapted from Chris Ferdinandi https://vanillajstoolkit.com/helpers/nextuntil/
+   * @return {Array} The siblings
+   */
+  getRange() {
     // Setup siblings array
-    let siblings = [this.start];
+    const siblings = [this.start];
 
     // Get the next sibling element
     let elem = this.start?.nextElementSibling;
@@ -113,7 +107,7 @@ class TextAnnotation {
         // Push it to the siblings array
         siblings.push(elem);
         // If we've reached our match, bail
-        if (elem == this.end) break;
+        if (elem === this.end) break;
         // Get the next sibling element
         elem = elem.nextElementSibling;
       }
@@ -122,34 +116,33 @@ class TextAnnotation {
     return siblings;
   }
 
-removeLinks() {
+  removeLinks() {
     try {
       for (let link of this.links) {
         link = document.querySelector(`[data-id="${this.annotation.id}"]`);
-        console.log(link);
-        link.parentElement.innerHTML = link.parentElement.innerText
+        link.parentElement.innerHTML = link.parentElement.innerText;
       }
     } catch (error) {
-      // console.error(error);
+      console.error(error);
     }
   }
 
   async addLinks() {
     if (this.range.length === 1) {
-      this.__handlePart();
+      this.handlePart();
     } else {
-      this.__handleStart();
-      this.__handleEnd();
+      this.handleStart();
+      this.handleEnd();
     }
-    this.range.forEach(wordSpan => {
-      const link = this.__create_link();
+    this.range.forEach((wordSpan) => {
+      const link = this.create_link();
       link.innerText = wordSpan.innerText;
       wordSpan.innerText = '';
       wordSpan.append(link);
     });
   }
 
-  __create_link() {
+  create_link() {
     const link = document.createElement('button');
     link.setAttribute('role', 'link');
     link.setAttribute('data-id', this.id);
@@ -158,9 +151,9 @@ removeLinks() {
     return link;
   }
 
-  __handlePart() {
+  handlePart() {
     const word = this.start.innerText;
-    const link = this.__create_link();
+    const link = this.create_link();
     const start = word.slice(0, this.startOffset);
     const end = word.slice(this.endOffset, word.length);
     link.innerText = word.slice(this.startOffset, this.endOffset);
@@ -169,32 +162,32 @@ removeLinks() {
     this.start.append(end);
   }
 
-  __handleStart() {
+  handleStart() {
     this.range.pop();
     const word = this.start.innerText;
-    const link = this.__create_link();
+    const link = this.create_link();
     link.innerText = word.slice(this.startOffset, word.length);
     this.start.innerHTML = `${word.slice(0, this.startOffset)}`;
     this.start.append(link);
   }
 
-  __handleEnd() {
+  handleEnd() {
     this.range.shift();
     const word = this.end.innerText;
-    const link = this.__create_link();
+    const link = this.create_link();
     link.innerText = word.slice(0, this.endOffset);
     this.end.innerHTML = word.slice(this.endOffset, word.length);
     this.end.prepend(link);
   }
 
-  __createOverlay(x, y) {
-    const firstComment = this.annotation.body.find(b => b.purpose == 'commenting');
+  createOverlay(x, y) {
+    const firstComment = this.annotation.body.find((b) => b.purpose === 'commenting');
     this.annotationOverlay = document.createElement('div');
     this.annotationOverlay.className = 'rdx-annotation-content';
     this.annotationOverlay.innerHTML = firstComment.value;
     this.viewer.addOverlay({
       element: this.annotationOverlay,
-      location: new OpenSeadragon.Rect(x + - 50, y + 50, 2, 2)
+      location: new OpenSeadragon.Rect(x + -50, y + 50, 2, 2),
     });
   }
 }

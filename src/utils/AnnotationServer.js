@@ -1,34 +1,34 @@
+/* eslint-disable no-param-reassign */
 class AnnotationServer {
-  constructor(options={}) {
+  constructor(options = {}) {
     this.endpoint = options.host || 'https://readux.io';
     this.headers = {
       'Content-Type': 'application/json',
-      'X-CSRFToken': options.token
-    }
+      'X-CSRFToken': options.token,
+    };
   }
 
   async makeRequest(annotation, method, path) {
-    console.log("🚀 ~ file: AnnotationServer.js:11 ~ AnnotationServer ~ makeRequest ~ annotation:", annotation)
-    const url = path.startsWith('http') ? path : `${this.host}${path}`;
+    // const url = path.startsWith('http') ? path : `${this.host}${path}`;
     const request = {
       method: method.toUpperCase(),
-      headers: this.headers
+      headers: this.headers,
     };
 
     if (request.method !== 'GET') {
-      request.body = typeof(annotation) === 'string' ? annotation : JSON.stringify(annotation);
+      request.body = typeof (annotation) === 'string' ? annotation : JSON.stringify(annotation);
     }
 
     const response = await fetch(
       path,
-      request
+      request,
     );
 
     if (response.ok) {
       return response;
-    } else {
-      // error
     }
+
+    console.error(response);
 
     return response;
   }
@@ -39,25 +39,26 @@ class AnnotationServer {
     return data;
   }
 
-  async create(annotation, path='/annotations-crud/') {
+  async create(annotation, path = '/annotations-crud/') {
     annotation.id = annotation.id.replace('#', '');
-    const response =  await this.makeRequest(annotation, 'post', path);
-    annotation.id = `#${annotation.id}`;
+    const response = await this.makeRequest(annotation, 'post', path);
+    const newAnnotation = await response.json();
+    return newAnnotation;
   }
 
-  async update(annotation, path='/annotations-crud/') {
+  async update(annotation, path = '/annotations-crud/') {
     annotation.id = annotation.id.replace('#', '');
-    const response =  await this.makeRequest(annotation, 'put', path);
-    annotation.id = `#${annotation.id}`;
+    const response = await this.makeRequest(annotation, 'put', path);
+    const updatedAnnotation = await response.json();
+    return updatedAnnotation;
   }
 
-  async delete(annotation, path='/annotations-crud/') {
+  async delete(annotation, path = '/annotations-crud/') {
     annotation.id = annotation.id.replace('#', '');
     annotation.contentOverlay = undefined;
-    const response =  await this.makeRequest(annotation, 'delete', path);
+    await this.makeRequest(annotation, 'delete', path);
     annotation.id = `#${annotation.id}`;
   }
-
 }
 
 export default AnnotationServer;

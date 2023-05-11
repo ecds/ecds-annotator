@@ -6,7 +6,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const APP_DIR = fs.realpathSync(process.cwd());
 
-const resolveAppPath = relativePath => path.resolve(APP_DIR, relativePath);
+const resolveAppPath = (relativePath) => path.resolve(APP_DIR, relativePath);
 
 module.exports = {
   entry: resolveAppPath('src'),
@@ -14,46 +14,46 @@ module.exports = {
     filename: 'ecds-annotator.min.js',
     library: 'ECDSAnnotator',
     libraryTarget: 'umd',
-    umdNamedDefine: true
+    umdNamedDefine: true,
   },
   performance: {
-    hints: false
+    hints: false,
   },
   devtool: 'source-map',
   optimization: {
-    minimize: true
+    minimize: true,
   },
   resolve: {
     extensions: ['.js', '.jsx'],
     alias: {
-      'react': 'preact/compat',
+      react: 'preact/compat',
       'react-dom': 'preact/compat',
       'preact/compat': path.resolve(__dirname, 'node_modules', 'preact', 'compat'),
       'preact/hooks': path.resolve(__dirname, 'node_modules', 'preact', 'hooks'),
-    }
+    },
   },
   module: {
     rules: [
       {
         test: /\.(js|jsx)$/,
         use: {
-          loader: 'babel-loader' ,
+          loader: 'babel-loader',
           options: {
-            "presets": [
-              "@babel/preset-env",
-              "@babel/preset-react"
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-react',
             ],
-            "plugins": [
+            plugins: [
               [
-                "@babel/plugin-proposal-class-properties"
-              ]
-            ]
-          }
-        }
+                '@babel/plugin-proposal-class-properties',
+              ],
+            ],
+          },
+        },
       },
-      { test: /\.css$/,  use: [ MiniCssExtractPlugin.loader, 'css-loader'] },
-      { test: /\.scss$/, use: [ MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader' ] }
-    ]
+      { test: /\.css$/, use: [MiniCssExtractPlugin.loader, 'css-loader'] },
+      { test: /\.scss$/, use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'] },
+    ],
   },
   devServer: {
     compress: true,
@@ -62,16 +62,16 @@ module.exports = {
     port: 3000,
     static: {
       directory: resolveAppPath('public'),
-      publicPath: '/'
-    }
+      publicPath: '/',
+    },
   },
   plugins: [
-    new HtmlWebpackPlugin ({
+    new HtmlWebpackPlugin({
       inject: 'head',
-      template: resolveAppPath('public/index.html')
+      template: resolveAppPath('public/index.html'),
     }),
     new MiniCssExtractPlugin({
       filename: 'ecds-annotator.min.css',
-    })
-  ]
-}
+    }),
+  ],
+};

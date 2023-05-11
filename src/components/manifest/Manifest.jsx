@@ -1,25 +1,24 @@
+/* eslint-disable no-restricted-globals */
 import React, { useEffect, useState } from 'react';
-import Viewer from '../viewer/Viewer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faAngleRight, faComment } from '@fortawesome/free-solid-svg-icons'
+import { faAngleLeft, faAngleRight, faComment } from '@fortawesome/free-solid-svg-icons';
+import Viewer from '../viewer/Viewer';
+import { getCanvasPid } from '../../utils/canvasUtils';
 
 import './Manifest.scss';
 
-function Manifest(props) {
-
-  const [data, setData] = useState(null);
-  const [manifestId, setManifestId] = useState(null);
+function Manifest({ manifest, token, user }) {
+  const [manifestData, setManifestData] = useState(null);
   const [canvases, setCanvases] = useState([]);
   const [currentCanvas, setCurrentCanvas] = useState(null);
   const [currentCanvasPid, setCurrentCanvasPid] = useState(null);
-  const [firstCanvas, setFirstCanvas] = useState({label: 'first'});
-  const [lastCanvas, setLastCanvas] = useState({label: 'last'});
+  const [firstCanvas, setFirstCanvas] = useState({ label: 'first' });
+  const [lastCanvas, setLastCanvas] = useState({ label: 'last' });
   const [canvasCount, setCanvasCount] = useState(0);
   const [showAll, setShowAll] = useState(false);
+  const [annotatedCanvases, setAnnotatedCanvases] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
-  const [userAnnotations, setUserAnnotations] = useState([]);
-
-  const canvasEvent = new CustomEvent('canvasswitch', { bubbles: true, detail: {} });
+  // const [userAnnotations, setUserAnnotations] = useState([]);
 
   window.addEventListener('popstate', () => {
     const pathPid = getCanvasPid(location.pathname);
@@ -27,7 +26,7 @@ function Manifest(props) {
       setShowAll(true);
     } else if (pathPid !== currentCanvasPid) {
       setShowAll(false);
-      setCurrentCanvas(canvases.find(canvas => canvas.id.includes(pathPid)));
+      setCurrentCanvas(canvases.find((canvas) => canvas.id.includes(pathPid)));
       setCurrentCanvasPid(pathPid);
     }
   });
@@ -41,46 +40,56 @@ function Manifest(props) {
   }, [currentCanvas, showAll]);
 
   useEffect(() => {
+    async function fetchVolumeAnnotations() {
+      const response = await fetch('https://readux-dev.org:3000/annotations/jay/snkng');
+      const annotations = await response.json();
+      setAnnotatedCanvases(annotations.items.map((item) => item.target.source));
+    }
+
+    if (annotatedCanvases.length === 0) fetchVolumeAnnotations();
+  }, []);
+
+  useEffect(() => {
     async function fetchManifest() {
-      if (!data) {
-        let response = await fetch(props.manifest);
-        let json = await response.json();
-        setData(json);
+      if (!manifestData) {
+        const response = await fetch(manifest);
+        const json = await response.json();
+        setManifestData(json);
         setThumbnails(
           json.items
-              .filter(
-                i => i.type === 'Canvas'
-              )
-              .flatMap(
-                c => c.items
-              )
-              .map(
-                b => {
-                  if (b.body.type === 'Image'){
-                    return b.body
-                  }
+            .filter(
+              (i) => i.type === 'Canvas',
+            )
+            .flatMap(
+              (c) => c.items,
+            )
+            .map(
+              // eslint-disable-next-line array-callback-return, consistent-return
+              (b) => {
+                if (b.body.type === 'Image') {
+                  return b.body;
                 }
-              )
+              },
+            ),
         );
       }
-    };
+    }
 
-    if (!data) fetchManifest();
-  }, [data, setData, setThumbnails]);
+    if (!manifestData) fetchManifest();
+  }, [manifestData, setManifestData, setThumbnails]);
+
+  // useEffect(() => {
+  //   if (thumbnails.length === 0) return;
+  //   setUserAnnotations(manifestData.annotations ?? []);
+  // }, [thumbnails, setUserAnnotations]);
 
   useEffect(() => {
-    if (thumbnails.length === 0) return;
+    if (!manifestData) return;
 
-    setUserAnnotations(data.annotations ?? []);
-  }, [thumbnails, setUserAnnotations]);
-
-  useEffect(() => {
-    if (!data) return;
-
-    setCanvases(data.items.filter((i) => i.type === 'Canvas'));
+    setCanvases(manifestData.items.filter((i) => i.type === 'Canvas'));
 
     if (!currentCanvas) {
-      const pids = canvases.map(canvas => getCanvasPid(canvas.id));
+      const pids = canvases.map((canvas) => getCanvasPid(canvas.id));
       const pidFromPath = getCanvasPid(location.pathname);
       setShowAll(pidFromPath === 'all');
       const currentCanvasIndex = pidFromPath ? pids.indexOf(pidFromPath) : 0;
@@ -91,55 +100,41 @@ function Manifest(props) {
       setCurrentCanvasPid(pids[currentCanvasIndex]);
     }
   }, [
-        setCanvases,
-        data,
-        currentCanvas,
-        setShowAll,
-        setCanvasCount,
-        setCurrentCanvas,
-        setFirstCanvas,
-        setLastCanvas,
-        setCurrentCanvasPid
-      ]
-  );
+    setCanvases,
+    manifestData,
+    currentCanvas,
+    setShowAll,
+    setCanvasCount,
+    setCurrentCanvas,
+    setFirstCanvas,
+    setLastCanvas,
+    setCurrentCanvasPid,
+  ]);
 
   useEffect(() => {
     if (showAll) {
-      const eventDetails = {
+      const detail = {
         annotationsOnPage: 0,
         canvas: 'all',
         annotationAdded: false,
-        annotationDeleted: false
-      }
+        annotationDeleted: false,
+      };
 
-      for (const [key, value] of Object.entries(eventDetails)) {
-        canvasEvent.detail[key] = value;
-      }
-
+      const canvasEvent = new CustomEvent('canvasswitch', { bubbles: true, detail });
       window.dispatchEvent(canvasEvent);
     }
   }, [showAll]);
 
-  const getCanvasPid = (uri) => {
-    const parts = uri.split('/').reverse();
-
-    if (parts[0] === 'canvas') {
-      return parts[1];
-    }
-
-    return parts[0];
-  }
-
-  const toggleShowAll = () => {
-    setShowAll(true);
-    setCurrentCanvas(null);
-  }
+  // const toggleShowAll = () => {
+  //   setShowAll(true);
+  //   setCurrentCanvas(null);
+  // };
 
   const goToCanvas = (canvas) => {
     setCurrentCanvas(canvases[canvas]);
     setCurrentCanvasPid(getCanvasPid(canvases[canvas].id));
     setShowAll(false);
-  }
+  };
 
   const nextCanvas = () => {
     setCurrentCanvas(canvases[canvases.indexOf(currentCanvas) + 1]);
@@ -152,58 +147,75 @@ function Manifest(props) {
   if (showAll && thumbnails) {
     return (
       <div className="flex flex-wrap justify-center overflow-auto items-end">
-          {
+        {
             thumbnails.map((thumbnail, index) => {
-              const userAnnotationCount = userAnnotations.filter(a => a.target.source === thumbnail.id).length
+              const userAnnotationCount = annotatedCanvases.filter(
+                (canvas) => canvas === thumbnail.id,
+              ).length;
               return (
-                <div className='p-4 rdx-thumbnail' key={index}>
-                    {userAnnotationCount > 0 && (
-                      <div className='fa-layers fa-fw relative top-4 left-[85%] text-3xl block'>
-                        <FontAwesomeIcon icon={faComment} size="9x" style={{ color: "var(--link-color)" }} />
-                        <span class="fa-layers-text fa-inverse text-base">{userAnnotationCount}</span>
-                      </div>
-                    )}
-                  <button onClick={() => goToCanvas(index)}>
+                <div className="p-4 rdx-thumbnail" key={thumbnail.id}>
+                  {userAnnotationCount > 0 && (
+                  <div className="fa-layers fa-fw relative top-4 left-[85%] text-3xl block">
+                    <FontAwesomeIcon icon={faComment} size="9x" style={{ color: 'var(--link-color)' }} />
+                    <span className="fa-layers-text fa-inverse text-base">{userAnnotationCount}</span>
+                  </div>
+                  )}
+                  <button type="button" onClick={() => goToCanvas(index)}>
                     <img src={`${thumbnail.id}/full/200,/0/default.jpg`} alt={`Page ${index + 1}`} />
-                    <p className='flex justify-center'>
+                    <p className="flex justify-center">
                       {index + 1}
                     </p>
                   </button>
                 </div>
-              )
+              );
             })
           }
       </div>
-    )
-  } else if (currentCanvas) {
+    );
+  } if (currentCanvas) {
     return (
-      <div className='Manifest h-full' data-testid="Manifest">
+      <div className="Manifest h-full" data-testid="Manifest">
 
-        <div className='h-5/6'>
-          <Viewer canvas={currentCanvas} setShowAll={setShowAll} {...props}  />
+        <div className="h-5/6">
+          <Viewer
+            canvas={currentCanvas}
+            setShowAll={setShowAll}
+            showAll={showAll}
+            token={token}
+            user={user}
+          />
         </div>
 
-        <div className='py-8 grid grid-cols-2 gap-2'>
+        <div className="py-8 grid grid-cols-2 gap-2">
           {currentCanvas && (
-            <div className='col-span-2 h-fit flex justify-center'>
-              {canvases.indexOf(currentCanvas) + 1} of {canvasCount}
+            <div className="col-span-2 h-fit flex justify-center">
+              {canvases.indexOf(currentCanvas) + 1}
+              {' '}
+              of
+              {canvasCount}
             </div>
           )}
 
-          <div className='flex justify-end'>
-            <button className='px-6 py-2 rounded-full rdx-page-button' disabled={currentCanvas === firstCanvas} onClick={() => previousCanvas()}><FontAwesomeIcon icon={faAngleLeft} /> previous</button>
+          <div className="flex justify-end">
+            <button type="button" className="px-6 py-2 rounded-full rdx-page-button" disabled={currentCanvas === firstCanvas} onClick={() => previousCanvas()}>
+              <FontAwesomeIcon icon={faAngleLeft} />
+              {' '}
+              previous
+            </button>
           </div>
-          <div className='flex justify-start'>
-            <button className='px-6 py-2 rounded-full rdx-page-button' disabled={currentCanvas === lastCanvas} onClick={() => nextCanvas()}>Next <FontAwesomeIcon icon={faAngleRight} /></button>
+          <div className="flex justify-start">
+            <button type="button" className="px-6 py-2 rounded-full rdx-page-button" disabled={currentCanvas === lastCanvas} onClick={() => nextCanvas()}>
+              Next
+              <FontAwesomeIcon icon={faAngleRight} />
+            </button>
           </div>
         </div>
       </div>
-    )
-  } else {
-    return (
-      <>loading</>
-    )
+    );
   }
+  return (
+    <>loading</>
+  );
 }
 
 export default Manifest;

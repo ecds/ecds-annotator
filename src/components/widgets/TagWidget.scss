@@ -1,0 +1,4 @@
+// Isolate the tag list for all other CSS
+ul.r6o-taglist * :not(path) {
+    all: unset;
+}

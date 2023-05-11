@@ -1,6 +1,6 @@
 {
   "name": "ecds-annotator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "IIIF viewer and annotation interface for readux.io. Built using Annotorious.",
   "repository": {
     "type": "git",
@@ -10,7 +10,8 @@
   "scripts": {
     "start": "./node_modules/postcss-cli/index.js src/index.css -o src/index.scss && webpack serve --open --mode=development",
     "build": "./node_modules/postcss-cli/index.js src/index.css -o src/index.scss && webpack --mode=production",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/**/*.js src/**/*.jsx"
   },
   "author": "Emory Center for Digital Scholarship",
   "license": "ISC",
@@ -22,11 +23,17 @@
     "autoprefixer": "^10.4.7",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
+    "eslint": "^8.39.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "html-webpack-plugin": "^5.5.0",
-    "jodit": "^3.18.9",
     "mini-css-extract-plugin": "^2.6.0",
     "postcss": "^8.4.14",
     "postcss-loader": "^7.0.0",
+    "prettier": "2.7.1",
     "react-icons": "^4.4.0",
     "sass": "^1.52.1",
     "sass-loader": "^13.0.0",
@@ -44,6 +51,8 @@
     "@recogito/annotorious-openseadragon": "^2.7.6",
     "@recogito/annotorious-selector-pack": "^0.5.3",
     "@recogito/annotorious-shape-labels": "^0.2.3",
+    "@recogito/recogito-client-core": "^1.7.7",
+    "jodit": "^3.18.9",
     "openseadragon": "^3.0.0",
     "postcss-cli": "^9.1.0",
     "react": "^18.1.0",
