@@ -16,7 +16,7 @@ function Manifest({ manifest, token, user }) {
   const [lastCanvas, setLastCanvas] = useState({ label: 'last' });
   const [canvasCount, setCanvasCount] = useState(0);
   const [showAll, setShowAll] = useState(false);
-  // const [annotatedCanvases, setAnnotatedCanvases] = useState([]);
+  const [annotatedCanvases, setAnnotatedCanvases] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
   // const [userAnnotations, setUserAnnotations] = useState([]);
 
