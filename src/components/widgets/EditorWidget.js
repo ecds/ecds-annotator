@@ -1,4 +1,5 @@
 import { Jodit } from 'jodit';
+import './EditorWidget.scss';
 
 const EditorWidget = ({ annotation }) => {
   const textArea = document.createElement('textarea');

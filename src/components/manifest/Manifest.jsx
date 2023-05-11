@@ -16,7 +16,7 @@ function Manifest({ manifest, token, user }) {
   const [lastCanvas, setLastCanvas] = useState({ label: 'last' });
   const [canvasCount, setCanvasCount] = useState(0);
   const [showAll, setShowAll] = useState(false);
-  const [annotatedCanvases, setAnnotatedCanvases] = useState([]);
+  // const [annotatedCanvases, setAnnotatedCanvases] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
   // const [userAnnotations, setUserAnnotations] = useState([]);
 
@@ -39,15 +39,15 @@ function Manifest({ manifest, token, user }) {
     }
   }, [currentCanvas, showAll]);
 
-  useEffect(() => {
-    async function fetchVolumeAnnotations() {
-      const response = await fetch('https://readux-dev.org:3000/annotations/jay/snkng');
-      const annotations = await response.json();
-      setAnnotatedCanvases(annotations.items.map((item) => item.target.source));
-    }
+  // useEffect(() => {
+  //   async function fetchVolumeAnnotations() {
+  //     const response = await fetch('https://readux-dev.org:3000/annotations/jay/snkng');
+  //     const annotations = await response.json();
+  //     setAnnotatedCanvases(annotations.items.map((item) => item.target.source));
+  //   }
 
-    if (annotatedCanvases.length === 0) fetchVolumeAnnotations();
-  }, []);
+  //   if (annotatedCanvases.length === 0) fetchVolumeAnnotations();
+  // }, []);
 
   useEffect(() => {
     async function fetchManifest() {
