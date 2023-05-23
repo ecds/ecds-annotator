@@ -36,28 +36,30 @@ const RangeSelector = ({
     <div>
       {children}
     </div>
-    <div className="ml-2.5 bg-black/50">
-      <input
-        type="range"
-        value={value}
-        min={0}
-        max={200}
-        onChange={({ target }) => onChange(target.value)}
-      />
-    </div>
-    <div className="text-black px-3 bg-black/50 text-sm h-[36px]">
-      <input
-        type="number"
-        min={0}
-        max={200}
-        step={1}
-        value={value}
-        onChange={({ target }) => onChange(target.value)}
-        className="my-[20%] border-none outline-none"
-      />
-    </div>
-    <div className="text-white pr-3 py-2 bg-black/50 text-sm h-[36px]">
-      %
+    <div className="bg-black/50 flex ml-2.5">
+      <div className="ml-2.5">
+        <input
+          type="range"
+          value={value}
+          min={0}
+          max={200}
+          onChange={({ target }) => onChange(target.value)}
+        />
+      </div>
+      <div className="text-black px-3 text-sm">
+        <input
+          type="number"
+          min={0}
+          max={200}
+          step={1}
+          value={value}
+          onChange={({ target }) => onChange(target.value)}
+          className="my-[20%] border-none outline-none w-12"
+        />
+      </div>
+      <div className="text-white pr-3 py-2 text-sm">
+        %
+      </div>
     </div>
   </Tooltip>
 );
