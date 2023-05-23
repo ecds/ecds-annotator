@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-globals */
 import React, { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleLeft, faAngleRight, faComment } from '@fortawesome/free-solid-svg-icons';
+import { FaAngleLeft, FaAngleRight, FaComment } from 'react-icons/fa';
+import { ManifestContext } from '../../ViewerContext';
 import Viewer from '../viewer/Viewer';
 import { getCanvasPid } from '../../utils/canvasUtils';
 
@@ -18,7 +18,7 @@ function Manifest({ manifest, token, user }) {
   const [showAll, setShowAll] = useState(false);
   const [annotatedCanvases, setAnnotatedCanvases] = useState([]);
   const [thumbnails, setThumbnails] = useState([]);
-  // const [userAnnotations, setUserAnnotations] = useState([]);
+  const manifestContextValue = { currentCanvas };
 
   window.addEventListener('popstate', () => {
     const pathPid = getCanvasPid(location.pathname);
@@ -146,71 +146,72 @@ function Manifest({ manifest, token, user }) {
 
   if (showAll && thumbnails) {
     return (
-      <div className="flex flex-wrap justify-center overflow-auto items-end">
-        {
-            thumbnails.map((thumbnail, index) => {
-              const userAnnotationCount = annotatedCanvases.filter(
-                (canvas) => canvas === thumbnail.id,
-              ).length;
-              return (
-                <div className="p-4 rdx-thumbnail" key={thumbnail.id}>
-                  {userAnnotationCount > 0 && (
-                  <div className="fa-layers fa-fw relative top-4 left-[85%] text-3xl block">
-                    <FontAwesomeIcon icon={faComment} size="9x" style={{ color: 'var(--link-color)' }} />
-                    <span className="fa-layers-text fa-inverse text-base">{userAnnotationCount}</span>
+      <ManifestContext.Provider value={manifestContextValue}>
+        <div className="flex flex-wrap justify-center overflow-auto items-end">
+          {
+              thumbnails.map((thumbnail, index) => {
+                const userAnnotationCount = annotatedCanvases.filter(
+                  (canvas) => canvas === thumbnail.id,
+                ).length;
+                return (
+                  <div className="p-4 rdx-thumbnail" key={thumbnail.id}>
+                    {userAnnotationCount > 0 && (
+                    <div className="relative top-4 left-[85%] text-3xl block">
+                      <FaComment size="9x" style={{ color: 'var(--link-color)' }} />
+                      <span className="fa-layers-text fa-inverse text-base">{userAnnotationCount}</span>
+                    </div>
+                    )}
+                    <button type="button" onClick={() => goToCanvas(index)}>
+                      <img src={`${thumbnail.id}/full/200,/0/default.jpg`} alt={`Page ${index + 1}`} />
+                      <p className="flex justify-center">
+                        {index + 1}
+                      </p>
+                    </button>
                   </div>
-                  )}
-                  <button type="button" onClick={() => goToCanvas(index)}>
-                    <img src={`${thumbnail.id}/full/200,/0/default.jpg`} alt={`Page ${index + 1}`} />
-                    <p className="flex justify-center">
-                      {index + 1}
-                    </p>
-                  </button>
-                </div>
-              );
-            })
-          }
-      </div>
+                );
+              })
+            }
+        </div>
+      </ManifestContext.Provider>
     );
   } if (currentCanvas) {
     return (
-      <div className="Manifest h-full" data-testid="Manifest">
-
-        <div className="h-5/6">
-          <Viewer
-            canvas={currentCanvas}
-            setShowAll={setShowAll}
-            showAll={showAll}
-            token={token}
-            user={user}
-          />
-        </div>
-
-        <div className="py-8 grid grid-cols-2 gap-2">
-          {currentCanvas && (
-            <div className="col-span-2 h-fit flex justify-center">
-              {canvases.indexOf(currentCanvas) + 1}
-              {' '}
-              of
-              {canvasCount}
+      <ManifestContext.Provider value={manifestContextValue}>
+        <div className="Manifest h-full" data-testid="Manifest">
+          <div className="h-5/6">
+            <Viewer
+              canvas={currentCanvas}
+              setShowAll={setShowAll}
+              showAll={showAll}
+              token={token}
+              user={user}
+            />
+          </div>
+          <div className="py-8 grid grid-cols-2 gap-2">
+            {currentCanvas && (
+              <div className="col-span-2 h-fit flex justify-center">
+                {canvases.indexOf(currentCanvas) + 1}
+                {' '}
+                of
+                {canvasCount}
+              </div>
+            )}
+            <div className="flex justify-end">
+              <button type="button" className="px-6 py-2 rounded-full rdx-page-button" disabled={currentCanvas === firstCanvas} onClick={() => previousCanvas()}>
+                <FaAngleLeft className="inline" />
+                {' '}
+                previous
+              </button>
             </div>
-          )}
-
-          <div className="flex justify-end">
-            <button type="button" className="px-6 py-2 rounded-full rdx-page-button" disabled={currentCanvas === firstCanvas} onClick={() => previousCanvas()}>
-              <FontAwesomeIcon icon={faAngleLeft} />
-              {' '}
-              previous
-            </button>
-          </div>
-          <div className="flex justify-start">
-            <button type="button" className="px-6 py-2 rounded-full rdx-page-button" disabled={currentCanvas === lastCanvas} onClick={() => nextCanvas()}>
-              Next
-              <FontAwesomeIcon icon={faAngleRight} />
-            </button>
+            <div className="flex justify-start">
+              <button type="button" className="px-6 py-2 rounded-full rdx-page-button" disabled={currentCanvas === lastCanvas} onClick={() => nextCanvas()}>
+                Next
+                <FaAngleRight className="inline" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </ManifestContext.Provider>
     );
   }
   return (

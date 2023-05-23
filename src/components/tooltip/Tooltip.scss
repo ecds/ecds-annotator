@@ -1,7 +1,9 @@
 /* Custom properties */
 :root {
-  --tooltip-text-color: black;
-  --tooltip-background-color: white;
+  --tooltip-text-color: white;
+  --tooltip-invert-text-color: black;
+  --tooltip-background-color: black;
+  --tooltip-invert-background-color: white;
   --tooltip-margin: 30px;
   --tooltip-arrow-size: 6px;
 }
@@ -56,6 +58,10 @@
   left: calc(100% + var(--tooltip-margin));
   top: 50%;
   transform: translateX(0) translateY(-50%);
+}
+.Tooltip-Tip.far-right {
+  top: 50%;
+    transform: translateX(150%) translateY(-50%);
 }
 /* CSS border triangles */
 .Tooltip-Tip.right::before {

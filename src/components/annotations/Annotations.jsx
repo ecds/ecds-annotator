@@ -1,19 +1,21 @@
 import React, {
-  useEffect, useRef, useState,
+  useContext, useEffect, useRef, useState,
 } from 'react';
+import ViewerContext from '../../ViewerContext';
 import Toolbar from '../toolbar/Toolbar';
 import OCR from './OCR';
 import AnnotationServer from '../../utils/AnnotationServer';
-import './Annotations.scss';
-import '@recogito/annotorious/dist/annotorious.min.css';
-import 'jodit/build/jodit.es2018.min.css';
 import ShapeAnnotations from './ShapeAnnotations';
 import TextAnnotations from './TextAnnotations';
 import { getCanvasPid } from '../../utils/canvasUtils';
+import './Annotations.scss';
+import '@recogito/annotorious/dist/annotorious.min.css';
+import 'jodit/build/jodit.es2018.min.css';
 
 const Annotations = ({
-  viewer, canvas, user, token, setShowAll, showAll,
+  canvas, user, token, setShowAll, showAll,
 }) => {
+  const { viewer } = useContext(ViewerContext);
   const [anno, setAnno] = useState();
   const [showAnnotations, setShowAnnotations] = useState(false);
   const [ocrReady, setOcrReady] = useState(false);
@@ -22,6 +24,7 @@ const Annotations = ({
   const [textAnnotations, setTextAnnotations] = useState([]);
   const [startNewTextAnnotation, setStartNewTextAnnotation] = useState(false);
   const osdCanvas = document.querySelector(`.${viewer.canvas.className} div`);
+  const [activeTool, setActiveTool] = useState(undefined);
 
   const canvasEventDetails = useRef({
     annotationsOnPage: 0,
@@ -70,11 +73,15 @@ const Annotations = ({
         await ocr.overlayOCR();
       }
 
-      const annotations = await annotationServer.get(userPage.id);
-      const shapeAnnos = annotations.items.filter((shapeAnno) => shapeAnno.target.selector.type !== 'RangeSelector');
+      const annotations = userPage?.id ? await annotationServer.get(userPage.id) : [];
+      const shapeAnnos = annotations.items
+        ? annotations.items.filter((shapeAnno) => shapeAnno.target.selector.type !== 'RangeSelector')
+        : [];
       setShapeAnnotations(shapeAnnos);
 
-      const textAnnos = annotations.items.filter((textAnno) => textAnno.target.selector.type === 'RangeSelector');
+      const textAnnos = annotations.items
+        ? annotations.items.filter((textAnno) => textAnno.target.selector.type === 'RangeSelector')
+        : [];
       setTextAnnotations(textAnnos);
     };
 
@@ -107,6 +114,8 @@ const Annotations = ({
         ocrReady={ocrReady}
         user={user}
         setShowAll={setShowAll}
+        activeTool={activeTool}
+        setActiveTool={setActiveTool}
       />
 
       <ShapeAnnotations

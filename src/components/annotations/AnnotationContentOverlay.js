@@ -20,6 +20,21 @@ class AnnotationContentOverlay {
     this.annotationOverlay.appendChild(innerSection);
 
     this.viewer.canvas.addEventListener('click', () => { this.hideAnnotation(); });
+
+    this.MouseTracker = new OpenSeadragon.MouseTracker({
+      element: this.annotationOverlay,
+      clickHandler(event) {
+        const { target } = event.originalEvent;
+        if (target.matches('a')) {
+          if (target.getAttribute('target') === '_blank') {
+            window.open(target.getAttribute('href'));
+          } else {
+            // eslint-disable-next-line no-restricted-globals
+            location.href = target.getAttribute('href');
+          }
+        }
+      },
+    });
   }
 
   showAnnotation(element /* , event */) {

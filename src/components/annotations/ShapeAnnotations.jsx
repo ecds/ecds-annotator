@@ -61,6 +61,10 @@ const ShapeAnnotations = ({
       }
 
       const newAnnotation = await annotationServer.create(tmpAnnotation);
+      newAnnotation.contentOverlay = new AnnotationContentOverlay(viewer, newAnnotation);
+      anno.addAnnotation(newAnnotation);
+
+      setIsAnnotating(false);
 
       setAnnotations(
         (shapeAnnos) => [...shapeAnnos, newAnnotation],

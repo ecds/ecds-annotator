@@ -1,5 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import OpenSeadragon from 'openseadragon';
+import ViewerContext from '../../ViewerContext';
 import Annotations from '../annotations/Annotations';
 import './Viewer.scss';
 
@@ -8,6 +14,12 @@ const Viewer = ({
 }) => {
   const [viewer, setViewer] = useState();
   const viewerContainer = useRef();
+
+  const contextValue = useMemo(() => (
+    {
+      viewer,
+    }
+  ), [viewer]);
 
   useEffect(() => {
     setViewer(
@@ -49,18 +61,19 @@ const Viewer = ({
 
   if (canvas) {
     return (
-      <div className="Viewer" ref={viewerContainer}>
-        {viewer && (
-          <Annotations
-            canvas={canvas}
-            token={token}
-            user={user}
-            viewer={viewer}
-            setShowAll={setShowAll}
-            showAll={showAll}
-          />
-        )}
-      </div>
+      <ViewerContext.Provider value={contextValue}>
+        <div className="Viewer" ref={viewerContainer}>
+          {viewer && (
+            <Annotations
+              canvas={canvas}
+              token={token}
+              user={user}
+              setShowAll={setShowAll}
+              showAll={showAll}
+            />
+          )}
+        </div>
+      </ViewerContext.Provider>
     );
   }
   return '';

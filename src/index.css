@@ -6,3 +6,7 @@
   background-color: black;
   color: white;
 }
+
+.jodit-ui-button {
+  background-color: #4483c4 !important;
+}
