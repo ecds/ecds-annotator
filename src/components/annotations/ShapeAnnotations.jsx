@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 /* eslint-disable react/prop-types */
 import { useEffect } from 'react';
 import * as Annotorious from '@recogito/annotorious-openseadragon';
@@ -6,6 +5,7 @@ import SelectorPack from '@recogito/annotorious-selector-pack';
 import BetterPolygon from '@recogito/annotorious-better-polygon';
 import EditorWidget from '../widgets/EditorWidget';
 import AnnotationContentOverlay from './AnnotationContentOverlay';
+import { getCanvasPid } from '../../utils/canvasUtils';
 
 const widgets = [EditorWidget, 'TAG'];
 
@@ -18,6 +18,7 @@ const ShapeAnnotations = ({
   setAnnotations,
   setIsAnnotating,
   showAnnotations,
+  // startNewTextAnnotation,
   user,
   viewer,
 }) => {
@@ -45,6 +46,7 @@ const ShapeAnnotations = ({
     if (!anno) return;
 
     const createShapeAnnotation = async (annotation) => {
+      if (getCanvasPid(annotation.target.source) !== getCanvasPid(canvas.id)) return;
       const tmpAnnotation = annotation;
 
       tmpAnnotation.target.source = canvas.id;
@@ -105,18 +107,18 @@ const ShapeAnnotations = ({
 
     SelectorPack(anno, { tools: ['circle', 'point', 'freehand'] });
 
-    anno.on('createAnnotation', (annotation) => {
-      createShapeAnnotation(annotation);
-      viewer.overlaysContainer.style.display = 'initial';
-    });
+    anno.off('createAnnotation');
+    anno.off('updateAnnotation');
+    anno.off('deleteAnnotation');
+    anno.off('clickAnnotation');
+    anno.off('mouseEnterAnnotation');
+    anno.off('mouseLeaveAnnotation');
+    anno.off('startSelection');
+    anno.off('cancelSelected');
 
-    anno.on('updateAnnotation', (annotation /* , previous */) => {
-      updateShapeAnnotation(annotation);
-    });
-
-    anno.on('deleteAnnotation', (annotation) => {
-      deleteAnnotation(annotation);
-    });
+    anno.on('createAnnotation', createShapeAnnotation);
+    anno.on('updateAnnotation', updateShapeAnnotation);
+    anno.on('deleteAnnotation', deleteAnnotation);
 
     anno.on('clickAnnotation', (annotation /* , element */) => {
       // const overlay = new AnnotationContentOverlay(props.viewer, annotation);
@@ -137,7 +139,6 @@ const ShapeAnnotations = ({
 
     anno.on('cancelSelected', (/* selection */) => {
       setIsAnnotating(false);
-      viewer.overlaysContainer.style.display = 'initial';
     });
   }, [anno, setAnnotations, canvas]);
 
@@ -149,11 +150,26 @@ const ShapeAnnotations = ({
     anno.clearAnnotations();
     annotations?.forEach((shapeAnno) => {
       if (showAnnotations) {
+        // eslint-disable-next-line no-param-reassign
         shapeAnno.contentOverlay = new AnnotationContentOverlay(viewer, shapeAnno);
         anno.addAnnotation(shapeAnno);
       }
     });
   }, [annotations, showAnnotations, anno]);
+
+  // useEffect(() => {
+  //   if (startNewTextAnnotation) {
+  //     anno.disableSelect = true;
+  //     annotations?.forEach((shapeAnno) => {
+  //       shapeAnno.contentOverlay = undefined;
+  //     });
+  //   } else {
+  //     anno.disableSelect = true;
+  //     annotations?.forEach((shapeAnno) => {
+  //       shapeAnno.contentOverlay = new AnnotationContentOverlay(viewer, shapeAnno);
+  //     });
+  //   }
+  // }, [startNewTextAnnotation]);
 
   return '';
 };

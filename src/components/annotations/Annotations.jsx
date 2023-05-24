@@ -127,6 +127,7 @@ const Annotations = ({
         setAnno={setAnno}
         setAnnotations={setShapeAnnotations}
         setIsAnnotating={setIsAnnotating}
+        startNewTextAnnotation={startNewTextAnnotation}
         showAnnotations={showAnnotations}
         user={user}
         viewer={viewer}
