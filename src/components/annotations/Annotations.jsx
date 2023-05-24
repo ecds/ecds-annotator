@@ -1,7 +1,7 @@
 import React, {
   useContext, useEffect, useRef, useState,
 } from 'react';
-import ViewerContext from '../../ViewerContext';
+import ViewerContext, { AppContext } from '../../ViewerContext';
 import Toolbar from '../toolbar/Toolbar';
 import OCR from './OCR';
 import AnnotationServer from '../../utils/AnnotationServer';
@@ -13,9 +13,10 @@ import '@recogito/annotorious/dist/annotorious.min.css';
 import 'jodit/build/jodit.es2018.min.css';
 
 const Annotations = ({
-  canvas, user, token, setShowAll, showAll,
+  canvas, setShowAll, showAll,
 }) => {
   const { viewer } = useContext(ViewerContext);
+  const { user, token } = useContext(AppContext);
   const [anno, setAnno] = useState();
   const [showAnnotations, setShowAnnotations] = useState(false);
   const [ocrReady, setOcrReady] = useState(false);
@@ -39,8 +40,7 @@ const Annotations = ({
     if (tool === 'text') {
       setStartNewTextAnnotation(true);
     } else {
-      // eslint-disable-next-line no-param-reassign
-      viewer.overlaysContainer.style.display = 'none';
+      setIsAnnotating(true);
     }
   };
 
@@ -54,7 +54,9 @@ const Annotations = ({
       setShapeAnnotations([]);
       setTextAnnotations([]);
       const ocrPage = canvas.annotations.find((page) => page.id.endsWith('ocr'));
-      const userPage = canvas.annotations.find((page) => page.id.endsWith(user.id));
+      const userPage = user.id
+        ? canvas.annotations.find((page) => page.id.endsWith(user.id))
+        : undefined;
 
       // TODO: Move this to Viewer after making it a func component
       viewer?.clearOverlays();
@@ -112,7 +114,6 @@ const Annotations = ({
         startAnnotation={startAnnotation}
         isAnnotating={isAnnotating}
         ocrReady={ocrReady}
-        user={user}
         setShowAll={setShowAll}
         activeTool={activeTool}
         setActiveTool={setActiveTool}
@@ -138,7 +139,7 @@ const Annotations = ({
         canvas={canvas}
         ocrReady={ocrReady}
         osdCanvas={osdCanvas}
-        setIsAnnotating={setIsAnnotating}
+        isAnnotating={isAnnotating}
         setStartNewTextAnnotation={setStartNewTextAnnotation}
         showAnnotations={showAnnotations}
         startNewTextAnnotation={startNewTextAnnotation}

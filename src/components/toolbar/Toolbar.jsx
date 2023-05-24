@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import OpenSeadragon from 'openseadragon';
 import {
   FaVectorSquare,
   FaDrawPolygon,
   FaICursor,
   FaMapMarker,
-  FaCircle,
+  FaRegCircle,
   FaComment,
   FaCommentSlash,
 } from 'react-icons/fa';
@@ -13,6 +13,7 @@ import { MdGesture } from 'react-icons/md';
 import { TfiLayoutGrid4Alt } from 'react-icons/tfi';
 import Tooltip from '../tooltip/Tooltip';
 import AdjustImage from './AdjustImage';
+import { AppContext } from '../../ViewerContext';
 import './Toolbar.scss';
 
 const AnnotationTool = ({
@@ -43,10 +44,10 @@ const Toolbar = ({
   setShowAll,
   startAnnotation,
   toggleTools,
-  user,
   viewer,
 }) => {
   const containerRef = useRef();
+  const { user } = useContext(AppContext);
 
   useEffect(() => {
     if (!viewer || !annotorious) return;
@@ -115,7 +116,7 @@ const Toolbar = ({
               disabled={!ocrReady}
               onClick={() => selectTool('circle')}
             >
-              <FaCircle />
+              <FaRegCircle />
             </AnnotationTool>
 
             <AnnotationTool

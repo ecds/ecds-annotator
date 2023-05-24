@@ -7,7 +7,7 @@ import { getCanvasPid } from '../../utils/canvasUtils';
 
 import './Manifest.scss';
 
-function Manifest({ manifest, token, user }) {
+function Manifest({ manifest }) {
   const [manifestData, setManifestData] = useState(null);
   const [canvases, setCanvases] = useState([]);
   const [currentCanvas, setCurrentCanvas] = useState(null);
@@ -183,8 +183,6 @@ function Manifest({ manifest, token, user }) {
               canvas={currentCanvas}
               setShowAll={setShowAll}
               showAll={showAll}
-              token={token}
-              user={user}
             />
           </div>
           <div className="py-8 grid grid-cols-2 gap-2">

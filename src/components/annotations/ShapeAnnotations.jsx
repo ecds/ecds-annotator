@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 /* eslint-disable react/prop-types */
 import { useEffect } from 'react';
 import * as Annotorious from '@recogito/annotorious-openseadragon';
@@ -87,6 +88,8 @@ const ShapeAnnotations = ({
           updatedAnnotation,
         ],
       );
+
+      setIsAnnotating(false);
     };
 
     const deleteAnnotation = async (annotation) => {
@@ -104,6 +107,7 @@ const ShapeAnnotations = ({
 
     anno.on('createAnnotation', (annotation) => {
       createShapeAnnotation(annotation);
+      viewer.overlaysContainer.style.display = 'initial';
     });
 
     anno.on('updateAnnotation', (annotation /* , previous */) => {
@@ -133,7 +137,6 @@ const ShapeAnnotations = ({
 
     anno.on('cancelSelected', (/* selection */) => {
       setIsAnnotating(false);
-      // eslint-disable-next-line no-param-reassign
       viewer.overlaysContainer.style.display = 'initial';
     });
   }, [anno, setAnnotations, canvas]);
@@ -146,7 +149,6 @@ const ShapeAnnotations = ({
     anno.clearAnnotations();
     annotations?.forEach((shapeAnno) => {
       if (showAnnotations) {
-        // eslint-disable-next-line no-param-reassign
         shapeAnno.contentOverlay = new AnnotationContentOverlay(viewer, shapeAnno);
         anno.addAnnotation(shapeAnno);
       }

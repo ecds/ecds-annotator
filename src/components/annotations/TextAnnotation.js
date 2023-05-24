@@ -68,9 +68,17 @@ class TextAnnotation {
 
   addEditOverlay() {
     this.links.forEach((link) => {
-      link.addEventListener('click', () => {
+      link.onclick = () => {
         this.selectedTextAnno(this, link);
-      });
+      };
+    });
+  }
+
+  removeAnnotationOverlays() {
+    this.links.forEach((link) => {
+      link.onmouseenter = undefined;
+      link.onmouseleave = undefined;
+      link.onclick = undefined;
     });
   }
 
@@ -120,6 +128,7 @@ class TextAnnotation {
     try {
       for (let link of this.links) {
         link = document.querySelector(`[data-id="${this.annotation.id}"]`);
+        if (!link) return;
         link.parentElement.innerHTML = link.parentElement.innerText;
       }
     } catch (error) {

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { AppContext } from './ViewerContext';
 import Manifest from './components/manifest/Manifest';
 import './index.scss';
 
@@ -14,11 +15,20 @@ class ECDSAnnotator {
 
     root.render(
       <div className="ecds-annotator flex flex-col h-full">
-        <Manifest
-          manifest={manifest}
-          token={token}
-          user={user}
-        />
+        <AppContext.Provider
+          value={{
+            manifest,
+            token,
+            user,
+            id,
+          }}
+        >
+          <Manifest
+            manifest={manifest}
+            token={token}
+            user={user}
+          />
+        </AppContext.Provider>
       </div>,
     );
   }

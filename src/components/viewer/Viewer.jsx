@@ -10,7 +10,7 @@ import Annotations from '../annotations/Annotations';
 import './Viewer.scss';
 
 const Viewer = ({
-  canvas, token, user, setShowAll, showAll,
+  canvas, setShowAll, showAll,
 }) => {
   const [viewer, setViewer] = useState();
   const viewerContainer = useRef();
@@ -66,8 +66,6 @@ const Viewer = ({
           {viewer && (
             <Annotations
               canvas={canvas}
-              token={token}
-              user={user}
               setShowAll={setShowAll}
               showAll={showAll}
             />

@@ -14,7 +14,7 @@ const TextAnnotations = ({
   canvas,
   ocrReady,
   osdCanvas,
-  setIsAnnotating,
+  isAnnotating,
   setStartNewTextAnnotation,
   showAnnotations,
   startNewTextAnnotation,
@@ -69,16 +69,14 @@ const TextAnnotations = ({
     ]);
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
-    setIsAnnotating(false);
     setStartNewTextAnnotation(false);
   };
 
   const onCancelAnnotation = () => {
-    setIsAnnotating(false);
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
     setStartNewTextAnnotation(false);
-    viewer.overlaysContainer.style.display = 'initial';
+    // viewer.overlaysContainer.style.display = 'initial';
   };
 
   const onDeleteAnnotation = async (annotation) => {
@@ -100,6 +98,19 @@ const TextAnnotations = ({
       (textAnno) => new TextAnnotation(textAnno, viewer, selectTextAnno),
     ));
   }, [annotations]);
+
+  useEffect(() => {
+    if (isAnnotating) {
+      textAnnotations?.forEach((textAnno) => {
+        textAnno.removeAnnotationOverlays();
+      });
+    } else {
+      textAnnotations?.forEach((textAnno) => {
+        textAnno.addContentOverlays();
+        textAnno.addEditOverlay();
+      });
+    }
+  }, [isAnnotating, textAnnotations]);
 
   /*
    * Remove/reload Text Annotations
