@@ -143,6 +143,7 @@ const Annotations = ({
         isAnnotating={isAnnotating}
         setStartNewTextAnnotation={setStartNewTextAnnotation}
         showAnnotations={showAnnotations}
+        setActiveTool={setActiveTool}
         startNewTextAnnotation={startNewTextAnnotation}
         user={user}
         viewer={viewer}

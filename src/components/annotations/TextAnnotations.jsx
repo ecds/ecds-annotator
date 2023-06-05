@@ -16,6 +16,7 @@ const TextAnnotations = ({
   osdCanvas,
   isAnnotating,
   setStartNewTextAnnotation,
+  setActiveTool,
   showAnnotations,
   startNewTextAnnotation,
   user,
@@ -55,6 +56,8 @@ const TextAnnotations = ({
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
     setTextAnnotations([...textAnnotations, createTextAnnotation]);
+    viewer.setMouseNavEnabled(true);
+    setActiveTool(undefined);
   };
 
   const updateTextAnnotation = async () => {
@@ -70,13 +73,16 @@ const TextAnnotations = ({
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
     setStartNewTextAnnotation(false);
+    viewer.setMouseNavEnabled(true);
+    setActiveTool(undefined);
   };
 
   const onCancelAnnotation = () => {
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
     setStartNewTextAnnotation(false);
-    // viewer.overlaysContainer.style.display = 'initial';
+    viewer.setMouseNavEnabled(true);
+    setActiveTool(undefined);
   };
 
   const onDeleteAnnotation = async (annotation) => {
@@ -91,6 +97,8 @@ const TextAnnotations = ({
         textAnnotations.filter((textAnno) => textAnno !== annoToDelete),
       );
     }
+    viewer.setMouseNavEnabled(true);
+    setActiveTool(undefined);
   };
 
   useEffect(() => {
