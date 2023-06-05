@@ -177,7 +177,7 @@ function Manifest({ manifest }) {
   } if (currentCanvas) {
     return (
       <ManifestContext.Provider value={manifestContextValue}>
-        <div className="Manifest h-full" data-testid="Manifest">
+        <div className="Manifest h-full flex flex-col" data-testid="Manifest">
           <div className="h-5/6">
             <Viewer
               canvas={currentCanvas}
@@ -185,7 +185,7 @@ function Manifest({ manifest }) {
               showAll={showAll}
             />
           </div>
-          <div className="py-8 grid grid-cols-2 gap-2">
+          <div className="my-8 grid grid-cols-2 gap-2">
             {currentCanvas && (
               <div className="col-span-2 h-fit flex justify-center">
                 {canvases.indexOf(currentCanvas) + 1}
