@@ -29,6 +29,7 @@ const AnnotationTool = ({
       className={`annotation-tool ${active ? 'active' : ''}`}
       onClick={onClick}
       disabled={disabled}
+      aria-label={tooltipContent}
     >
       {children}
     </button>
@@ -47,7 +48,7 @@ const Toolbar = ({
   viewer,
 }) => {
   const containerRef = useRef();
-  const { user } = useContext(AppContext);
+  const { user, uiActions } = useContext(AppContext);
 
   useEffect(() => {
     if (!viewer || !annotorious) return;
@@ -76,7 +77,7 @@ const Toolbar = ({
   return (
     <div ref={containerRef} className={`Toolbar ml-3 mt-2 w-16 flex flex-col ${ocrReady ? '' : 'not-ready'}`}>
       <Tooltip content="Show thumbnails of all pages.">
-        <button type="button" onClick={setShowAll}>
+        <button type="button" onClick={setShowAll} aria-label="Show thumbnails of all pages.">
           <TfiLayoutGrid4Alt />
         </button>
       </Tooltip>
@@ -84,7 +85,13 @@ const Toolbar = ({
       <AdjustImage />
 
       <Tooltip content={`${expandTools ? 'Hide' : 'Show'} annotations and tools`}>
-        <button type="button" className="annotation-tool" onClick={toggleTools} disabled={!ocrReady}>
+        <button
+          type="button"
+          className="annotation-tool"
+          onClick={toggleTools}
+          disabled={!ocrReady}
+          aria-label="Toggle annotation tools."
+        >
           {expandTools ? <FaCommentSlash /> : <FaComment />}
         </button>
       </Tooltip>
@@ -145,8 +152,25 @@ const Toolbar = ({
             >
               <FaICursor />
             </AnnotationTool>
+
           </>
         )}
+      {uiActions.map((uiAction) => (
+        <Tooltip
+          key={uiAction.id}
+          content={uiAction.tooltipContent}
+        >
+          <button
+            type="button"
+            aria-label={uiAction.toggleTools}
+            onClick={() => uiAction.onClick()}
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: uiAction.icon,
+            }}
+          />
+        </Tooltip>
+      ))}
     </div>
   );
 };
