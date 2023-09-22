@@ -162,7 +162,7 @@ const Toolbar = ({
         >
           <button
             type="button"
-            aria-label={uiAction.toggleTools}
+            aria-label={uiAction.tooltipContent}
             onClick={() => uiAction.onClick()}
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{
