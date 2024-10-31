@@ -57,25 +57,23 @@
       <nav class="div1">
         <h1>ECDS Annotator</h1>
       </nav>
-      <div id="rdx-viewer" class="viewer-container"> </div>
-      <div class="div3"> </div>
+      <div id="rdx-viewer" class="viewer-container"></div>
+      <div class="div3"></div>
     </div>
     <script>
-      window.onload = function() {
-        ECDSAnnotator.init(
-          {
-            manifest: 'https://readux.ecdsdev.org/iiif/v3/sndcv/manifest',
-            id: 'rdx-viewer',
-            host: 'https://readux-dev.org',
-            user: {
-              id: 'jayvarner',
-              displayName: 'Jay Varner'
-            },
-            token: 'XXXXX',
-            localEnv: 'dev'
-          }
-        );
-      }
+      window.onload = function () {
+        ECDSAnnotator.init({
+          manifest: "https://dev.readux.io/iiif/v3/sndcv/manifest",
+          id: "rdx-viewer",
+          host: "https://readux-dev.org",
+          user: {
+            id: "jayvarner",
+            displayName: "Jay Varner",
+          },
+          token: "XXXXX",
+          localEnv: "dev",
+        });
+      };
     </script>
     <!--
       This HTML file is a template.

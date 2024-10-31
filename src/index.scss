@@ -318,11 +318,6 @@ input::-moz-placeholder, textarea::-moz-placeholder {
   color: #9ca3af; /* 2 */
 }
 
-input:-ms-input-placeholder, textarea:-ms-input-placeholder {
-  opacity: 1; /* 1 */
-  color: #9ca3af; /* 2 */
-}
-
 input::placeholder,
 textarea::placeholder {
   opacity: 1; /* 1 */
@@ -522,17 +517,20 @@ video {
   margin-top: 20% !important;
   margin-bottom: 20% !important;
 }
-.ml-2\.5 {
-  margin-left: 0.625rem !important;
-}
-.ml-2 {
-  margin-left: 0.5rem !important;
-}
 .ml-3 {
   margin-left: 0.75rem !important;
 }
 .mt-2 {
   margin-top: 0.5rem !important;
+}
+.mr-8 {
+  margin-right: 2rem !important;
+}
+.ml-2\.5 {
+  margin-left: 0.625rem !important;
+}
+.ml-2 {
+  margin-left: 0.5rem !important;
 }
 .block {
   display: block !important;
@@ -605,6 +603,9 @@ video {
 .overflow-hidden {
   overflow: hidden !important;
 }
+.overflow-x-hidden {
+  overflow-x: hidden !important;
+}
 .rounded-lg {
   border-radius: 0.5rem !important;
 }
@@ -665,6 +666,10 @@ video {
 }
 .text-left {
   text-align: left !important;
+}
+.text-2xl {
+  font-size: 1.5rem !important;
+  line-height: 2rem !important;
 }
 .text-3xl {
   font-size: 1.875rem !important;
