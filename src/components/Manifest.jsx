@@ -1,14 +1,13 @@
 /* eslint-disable no-restricted-globals */
 import React, { useEffect, useState } from "react";
 import { FaAngleLeft, FaAngleRight, FaComment } from "react-icons/fa";
-import { ManifestContext } from "../../ViewerContext";
-import Viewer from "../viewer/Viewer";
-import { getCanvasPid } from "../../utils/canvasUtils";
+import { ManifestContext } from "../ViewerContext";
+import Viewer from "./viewer/Viewer";
+import { getCanvasPid } from "../utils/canvasUtils";
 
-import "./Manifest.scss";
-import UIActions from "../toolbar/UIActions";
+import UIActions from "./toolbar/UIActions";
 
-function Manifest({ manifest }) {
+function Manifest({ manifest, user }) {
   const [manifestData, setManifestData] = useState(null);
   const [canvases, setCanvases] = useState([]);
   const [currentCanvas, setCurrentCanvas] = useState(null);
@@ -18,7 +17,7 @@ function Manifest({ manifest }) {
   const [canvasCount, setCanvasCount] = useState(0);
   const [showAll, setShowAll] = useState(false);
   const [annotatedCanvases, setAnnotatedCanvases] = useState([]);
-  const [thumbnails, setThumbnails] = useState([]);
+  const [canvasBodies, setCanvasBodies] = useState([]);
   const manifestContextValue = { currentCanvas };
 
   window.addEventListener("popstate", () => {
@@ -35,21 +34,27 @@ function Manifest({ manifest }) {
   useEffect(() => {
     if (showAll) {
       history.pushState({}, null, "all");
-      // history.pushState({}, null, currentCanvas);
     } else if (currentCanvas?.id) {
       history.pushState({}, null, getCanvasPid(currentCanvas.id));
     }
   }, [currentCanvas, showAll]);
 
-  // useEffect(() => {
-  //   async function fetchVolumeAnnotations() {
-  //     const response = await fetch('https://readux-dev.org:3000/annotations/jay/snkng');
-  //     const annotations = await response.json();
-  //     setAnnotatedCanvases(annotations.items.map((item) => item.target.source));
-  //   }
+  useEffect(() => {
+    async function fetchVolumeAnnotations() {
+      const response = await fetch(
+        `${location.protocol}//${location.host}/annotation_count/${user.id}/${
+          location.pathname.split("/").reverse()[2]
+        }`
+        // "https://localhost:3000/annotations/jay/snkng"
+        // "https://localhost:3000/annotations/jay/snkng/"
+      );
+      const annotations = await response.json();
+      // console.log("🚀 ~ fetchVolumeAnnotations ~ annotations:", annotations);
+      setAnnotatedCanvases(annotations);
+    }
 
-  //   if (annotatedCanvases.length === 0) fetchVolumeAnnotations();
-  // }, []);
+    if (showAll) fetchVolumeAnnotations();
+  }, [user, location, showAll]);
 
   useEffect(() => {
     async function fetchManifest() {
@@ -57,24 +62,22 @@ function Manifest({ manifest }) {
         const response = await fetch(manifest);
         const json = await response.json();
         setManifestData(json);
-        setThumbnails(
+        setCanvasBodies(
           json.items
             .filter((i) => i.type === "Canvas")
-            .flatMap((c) => c.items)
-            .map(
-              // eslint-disable-next-line array-callback-return, consistent-return
-              (b) => {
-                if (b.body.type === "Image") {
-                  return b.body;
-                }
-              }
-            )
+            .flatMap((c) => {
+              return {
+                width: c.width,
+                height: c.height,
+                ...c.items.find((b) => b.body.type === "Image").body,
+              };
+            })
         );
       }
     }
 
     if (!manifestData) fetchManifest();
-  }, [manifestData, setManifestData, setThumbnails]);
+  }, [manifestData, setManifestData, setCanvasBodies]);
 
   // useEffect(() => {
   //   if (thumbnails.length === 0) return;
@@ -111,6 +114,8 @@ function Manifest({ manifest }) {
 
   useEffect(() => {
     if (showAll) {
+      setCurrentCanvas(null);
+      setCurrentCanvasPid(null);
       const detail = {
         annotationsOnPage: 0,
         canvas: "all",
@@ -126,11 +131,6 @@ function Manifest({ manifest }) {
     }
   }, [showAll]);
 
-  // const toggleShowAll = () => {
-  //   setShowAll(true);
-  //   setCurrentCanvas(null);
-  // };
-
   const goToCanvas = (canvas) => {
     setCurrentCanvas(canvases[canvas]);
     setCurrentCanvasPid(getCanvasPid(canvases[canvas].id));
@@ -145,34 +145,44 @@ function Manifest({ manifest }) {
     setCurrentCanvas(canvases[canvases.indexOf(currentCanvas) - 1]);
   };
 
-  if (showAll && thumbnails) {
+  if (showAll && canvasBodies) {
     return (
       <ManifestContext.Provider value={manifestContextValue}>
         <div className="flex flex-col ml-3 mt-2 text-2xl p-4">
           <UIActions />
         </div>
         <div className="flex flex-wrap justify-center overflow-auto items-end mr-8">
-          {thumbnails.map((thumbnail, index) => {
-            const userAnnotationCount = annotatedCanvases.filter(
-              (canvas) => canvas === thumbnail.id
-            ).length;
+          {canvasBodies.map((canvasBody, index) => {
+            let count = 0;
+            if (annotatedCanvases && annotatedCanvases[index]) {
+              count = annotatedCanvases[index]?.count ?? 0;
+            }
             return (
-              <div className="p-4 rdx-thumbnail" key={thumbnail.id}>
-                {userAnnotationCount > 0 && (
-                  <div className="relative top-4 left-[85%] text-3xl block">
-                    <FaComment
-                      size="9x"
-                      style={{ color: "var(--link-color)" }}
-                    />
-                    <span className="fa-layers-text fa-inverse text-base">
-                      {userAnnotationCount}
+              <div
+                className="px-4 min-h-[200px] min-w-[200px]"
+                key={canvasBody.id}
+              >
+                {count > 0 && (
+                  <div className="relative top-4 left-[85%] w-8 h-8 text-3xl block">
+                    <FaComment size="32" className="text-[#457B9D]" />
+                    <span className="fa-layers-text fa-inverse text-base relative -top-10 inline-block text-center w-8">
+                      {count}
                     </span>
                   </div>
                 )}
                 <button type="button" onClick={() => goToCanvas(index)}>
                   <img
-                    src={`${thumbnail.id}/full/200,/0/default.jpg`}
+                    src={
+                      currentCanvas
+                        ? ""
+                        : `${canvasBody.id}/full/200,/0/default.jpg`
+                    }
+                    loading="lazy"
                     alt={`Page ${index + 1}`}
+                    width={200}
+                    height={Math.ceil(
+                      (canvasBody.height / canvasBody.width) * 200
+                    )}
                   />
                   <p className="flex justify-center">{index + 1}</p>
                 </button>
@@ -183,6 +193,7 @@ function Manifest({ manifest }) {
       </ManifestContext.Provider>
     );
   }
+
   if (currentCanvas) {
     return (
       <ManifestContext.Provider value={manifestContextValue}>
@@ -203,7 +214,7 @@ function Manifest({ manifest }) {
             <div className="flex justify-end">
               <button
                 type="button"
-                className="px-6 py-2 rounded-full rdx-page-button"
+                className="px-6 py-2 rounded-full bg-white text-black min-w-[25%] uppercase disabled:bg-gray-400 disabled:cursor-not-allowed"
                 disabled={currentCanvas === firstCanvas}
                 onClick={() => previousCanvas()}
               >
@@ -213,7 +224,7 @@ function Manifest({ manifest }) {
             <div className="flex justify-start">
               <button
                 type="button"
-                className="px-6 py-2 rounded-full rdx-page-button"
+                className="px-6 py-2 rounded-full bg-white text-black min-w-[25%] uppercase disabled:bg-gray-400 disabled:cursor-not-allowed"
                 disabled={currentCanvas === lastCanvas}
                 onClick={() => nextCanvas()}
               >

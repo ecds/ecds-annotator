@@ -9,7 +9,7 @@ module.exports = {
     ecmaVersion: "latest",
     sourceType: "module",
   },
-  plugins: ["react"],
+  plugins: ["react", "jsx-a11y"],
   rules: {
     "import/no-extraneous-dependencies": "off",
     "no-console": ["error", { allow: ["warn", "error"] }],

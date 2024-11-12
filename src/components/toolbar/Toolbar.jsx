@@ -14,7 +14,6 @@ import { TfiLayoutGrid4Alt } from "react-icons/tfi";
 import Tooltip from "../tooltip/Tooltip";
 import AdjustImage from "./AdjustImage";
 import { AppContext } from "../../ViewerContext";
-import "./Toolbar.scss";
 import UIActions from "./UIActions";
 
 const AnnotationTool = ({
@@ -30,7 +29,9 @@ const AnnotationTool = ({
   >
     <button
       type="button"
-      className={`annotation-tool ${active ? "active" : ""}`}
+      className={`annotation-tool ${
+        active ? "text-sky-500" : "text-white"
+      } cursor-pointer disabled:cursor-not-allowed px-1 text-2xl`}
       onClick={onClick}
       disabled={disabled}
       aria-label={tooltipContent}
@@ -81,8 +82,8 @@ const Toolbar = ({
   return (
     <div
       ref={containerRef}
-      className={`Toolbar ml-3 mt-2 w-16 flex flex-col ${
-        ocrReady ? "" : "not-ready"
+      className={`absolute top-0 bg-black/50 text-white text-2xl p-4 ml-3 mt-2 w-16 flex flex-col ${
+        ocrReady ? "opacity-100" : "opacity-50"
       }`}
     >
       <Tooltip content="Show thumbnails of all pages.">

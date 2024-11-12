@@ -494,6 +494,9 @@ video {
     max-width: 1536px;
   }
 }
+.absolute {
+  position: absolute !important;
+}
 .relative {
   position: relative !important;
 }
@@ -502,6 +505,12 @@ video {
 }
 .left-\[85\%\] {
   left: 85% !important;
+}
+.-top-10 {
+  top: -2.5rem !important;
+}
+.top-0 {
+  top: 0px !important;
 }
 .z-10 {
   z-index: 10 !important;
@@ -535,6 +544,9 @@ video {
 .block {
   display: block !important;
 }
+.inline-block {
+  display: inline-block !important;
+}
 .inline {
   display: inline !important;
 }
@@ -547,12 +559,21 @@ video {
 .h-full {
   height: 100% !important;
 }
+.h-8 {
+  height: 2rem !important;
+}
 .h-5\/6 {
   height: 83.333333% !important;
 }
 .h-fit {
   height: -moz-fit-content !important;
   height: fit-content !important;
+}
+.min-h-\[200px\] {
+  min-height: 200px !important;
+}
+.w-8 {
+  width: 2rem !important;
 }
 .w-96 {
   width: 24rem !important;
@@ -567,8 +588,17 @@ video {
 .w-16 {
   width: 4rem !important;
 }
+.min-w-\[200px\] {
+  min-width: 200px !important;
+}
+.min-w-\[25\%\] {
+  min-width: 25% !important;
+}
 .transform {
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)) !important;
+}
+.cursor-pointer {
+  cursor: pointer !important;
 }
 .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
@@ -606,11 +636,11 @@ video {
 .overflow-x-hidden {
   overflow-x: hidden !important;
 }
-.rounded-lg {
-  border-radius: 0.5rem !important;
-}
 .rounded-full {
   border-radius: 9999px !important;
+}
+.rounded-lg {
+  border-radius: 0.5rem !important;
 }
 .border-l-2 {
   border-left-width: 2px !important;
@@ -622,6 +652,10 @@ video {
   --tw-border-opacity: 1 !important;
   border-color: rgb(255 255 255 / var(--tw-border-opacity)) !important;
 }
+.bg-black {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity)) !important;
+}
 .bg-white {
   --tw-bg-opacity: 1 !important;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity)) !important;
@@ -631,6 +665,10 @@ video {
 }
 .p-4 {
   padding: 1rem !important;
+}
+.px-4 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
 }
 .px-6 {
   padding-left: 1.5rem !important;
@@ -652,6 +690,10 @@ video {
   padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
 }
+.px-1 {
+  padding-left: 0.25rem !important;
+  padding-right: 0.25rem !important;
+}
 .pl-2 {
   padding-left: 0.5rem !important;
 }
@@ -666,6 +708,9 @@ video {
 }
 .text-left {
   text-align: left !important;
+}
+.text-center {
+  text-align: center !important;
 }
 .text-2xl {
   font-size: 1.5rem !important;
@@ -683,20 +728,37 @@ video {
   font-size: 0.875rem !important;
   line-height: 1.25rem !important;
 }
+.uppercase {
+  text-transform: uppercase !important;
+}
 .italic {
   font-style: italic !important;
-}
-.text-black {
-  --tw-text-opacity: 1 !important;
-  color: rgb(0 0 0 / var(--tw-text-opacity)) !important;
 }
 .text-white {
   --tw-text-opacity: 1 !important;
   color: rgb(255 255 255 / var(--tw-text-opacity)) !important;
 }
+.text-\[\#457B9D\] {
+  --tw-text-opacity: 1 !important;
+  color: rgb(69 123 157 / var(--tw-text-opacity)) !important;
+}
+.text-black {
+  --tw-text-opacity: 1 !important;
+  color: rgb(0 0 0 / var(--tw-text-opacity)) !important;
+}
+.text-sky-500 {
+  --tw-text-opacity: 1 !important;
+  color: rgb(14 165 233 / var(--tw-text-opacity)) !important;
+}
 .underline {
   -webkit-text-decoration-line: underline !important;
           text-decoration-line: underline !important;
+}
+.opacity-100 {
+  opacity: 1 !important;
+}
+.opacity-50 {
+  opacity: 0.5 !important;
 }
 .shadow-xl {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
@@ -739,6 +801,15 @@ video {
 
 .jodit-ui-button {
   background-color: #4483c4 !important;
+}
+
+.disabled\:cursor-not-allowed:disabled {
+  cursor: not-allowed !important;
+}
+
+.disabled\:bg-gray-400:disabled {
+  --tw-bg-opacity: 1 !important;
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity)) !important;
 }
 
 @media (min-width: 640px) {

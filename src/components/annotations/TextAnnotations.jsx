@@ -1,11 +1,11 @@
 /* eslint-disable no-param-reassign */
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Editor } from '@recogito/recogito-client-core';
-import TextAnnotation from './TextAnnotation';
-import BaseTextAnno from './BaseTextAnnotation';
-import EditorWidget from '../widgets/EditorWidget';
-import TagWidget from '../widgets/TagWidget';
+import React, { useState, useEffect, useRef } from "react";
+import { Editor } from "@recogito/recogito-client-core";
+import TextAnnotation from "./TextAnnotation";
+import BaseTextAnno from "./BaseTextAnnotation";
+import EditorWidget from "../widgets/EditorWidget";
+import TagWidget from "../widgets/TagWidget";
 
 const TextAnnotations = ({
   annotations,
@@ -21,11 +21,11 @@ const TextAnnotations = ({
   startNewTextAnnotation,
   user,
   viewer,
-
 }) => {
   const [textAnnotations, setTextAnnotations] = useState([]);
   const [selectedTextAnno, setSelectedTextAnno] = useState(undefined);
-  const [selectedTextAnnoElement, setSelectedTextAnnoElement] = useState(undefined);
+  const [selectedTextAnnoElement, setSelectedTextAnnoElement] =
+    useState(undefined);
   const editorRef = useRef();
   const widgets = [EditorWidget, TagWidget];
 
@@ -38,20 +38,25 @@ const TextAnnotations = ({
     const selection = window.getSelection();
     if (!selection.rangeCount) return;
     if (
-      selection.anchorOffset === selection.focusOffset
-      && selection.anchorNode === selection.focusNode
-    ) return;
+      selection.anchorOffset === selection.focusOffset &&
+      selection.anchorNode === selection.focusNode
+    )
+      return;
     const range = selection.getRangeAt(0);
-    osdCanvas.removeEventListener('mouseup', createTextAnnotation);
+    osdCanvas.removeEventListener("mouseup", createTextAnnotation);
     // eslint-disable-next-line no-param-reassign
-    osdCanvas.style.zIndex = '';
+    osdCanvas.style.zIndex = "";
     const baseTextAnno = BaseTextAnno({ user, canvas, range });
-    setSelectedTextAnno(new TextAnnotation(baseTextAnno, viewer, selectTextAnno));
+    setSelectedTextAnno(
+      new TextAnnotation(baseTextAnno, viewer, selectTextAnno)
+    );
     setSelectedTextAnnoElement(selection.focusNode.parentElement);
   };
 
   const saveNewTextAnnotation = async () => {
-    const createdTextAnno = await annotationServer.create(selectedTextAnno.annotation);
+    const createdTextAnno = await annotationServer.create(
+      selectedTextAnno.annotation
+    );
     createdTextAnno.bodies = createdTextAnno.body;
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
@@ -88,13 +93,13 @@ const TextAnnotations = ({
   const onDeleteAnnotation = async (annotation) => {
     onCancelAnnotation();
     await annotationServer.delete(annotation);
-    if (annotation.target.selector.type === 'RangeSelector') {
+    if (annotation.target.selector.type === "RangeSelector") {
       const annoToDelete = textAnnotations.find(
-        (textAnno) => textAnno.annotation.id === annotation.id,
+        (textAnno) => textAnno.annotation.id === annotation.id
       );
       annoToDelete.removeLinks();
       setTextAnnotations(
-        textAnnotations.filter((textAnno) => textAnno !== annoToDelete),
+        textAnnotations.filter((textAnno) => textAnno !== annoToDelete)
       );
     }
     viewer.setMouseNavEnabled(true);
@@ -102,9 +107,11 @@ const TextAnnotations = ({
   };
 
   useEffect(() => {
-    setTextAnnotations(annotations.map(
-      (textAnno) => new TextAnnotation(textAnno, viewer, selectTextAnno),
-    ));
+    setTextAnnotations(
+      annotations.map(
+        (textAnno) => new TextAnnotation(textAnno, viewer, selectTextAnno)
+      )
+    );
   }, [annotations]);
 
   useEffect(() => {
@@ -141,13 +148,13 @@ const TextAnnotations = ({
     if (startNewTextAnnotation) {
       viewer.setMouseNavEnabled(false);
       osdCanvas.style.zIndex = 999;
-      osdCanvas.addEventListener('mouseup', createTextAnnotation);
+      osdCanvas.addEventListener("mouseup", createTextAnnotation);
     }
   }, [startNewTextAnnotation]);
 
   return (
     <div>
-      {(selectedTextAnnoElement && selectedTextAnno) && (
+      {selectedTextAnnoElement && selectedTextAnno && (
         <Editor
           ref={editorRef}
           detachable

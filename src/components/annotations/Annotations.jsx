@@ -1,20 +1,16 @@
-import React, {
-  useContext, useEffect, useRef, useState,
-} from 'react';
-import ViewerContext, { AppContext } from '../../ViewerContext';
-import Toolbar from '../toolbar/Toolbar';
-import OCR from './OCR';
-import AnnotationServer from '../../utils/AnnotationServer';
-import ShapeAnnotations from './ShapeAnnotations';
-import TextAnnotations from './TextAnnotations';
-import { getCanvasPid } from '../../utils/canvasUtils';
-import './Annotations.scss';
-import '@recogito/annotorious/dist/annotorious.min.css';
-import 'jodit/build/jodit.es2018.min.css';
+import React, { useContext, useEffect, useRef, useState } from "react";
+import ViewerContext, { AppContext } from "../../ViewerContext";
+import Toolbar from "../toolbar/Toolbar";
+import OCR from "./OCR";
+import AnnotationServer from "../../utils/AnnotationServer";
+import ShapeAnnotations from "./ShapeAnnotations";
+import TextAnnotations from "./TextAnnotations";
+import { getCanvasPid } from "../../utils/canvasUtils";
+import "./Annotations.scss";
+import "@recogito/annotorious/dist/annotorious.min.css";
+import "jodit/build/jodit.es2018.min.css";
 
-const Annotations = ({
-  canvas, setShowAll, showAll,
-}) => {
+const Annotations = ({ canvas, setShowAll, showAll }) => {
   const { viewer } = useContext(ViewerContext);
   const { user, token } = useContext(AppContext);
   const [anno, setAnno] = useState();
@@ -29,7 +25,7 @@ const Annotations = ({
 
   const canvasEventDetails = useRef({
     annotationsOnPage: 0,
-    canvas: showAll ? 'all' : getCanvasPid(canvas.id),
+    canvas: showAll ? "all" : getCanvasPid(canvas.id),
     annotationAdded: false,
     annotationDeleted: false,
   });
@@ -37,7 +33,7 @@ const Annotations = ({
   const annotationServer = new AnnotationServer({ token });
 
   const startAnnotation = (tool) => {
-    if (tool === 'text') {
+    if (tool === "text") {
       setStartNewTextAnnotation(true);
     } else {
       setIsAnnotating(true);
@@ -50,10 +46,12 @@ const Annotations = ({
   useEffect(() => {
     const onCanvasChange = async () => {
       // eslint-disable-next-line no-param-reassign
-      viewer.overlaysContainer.style.display = 'initial';
+      viewer.overlaysContainer.style.display = "initial";
       setShapeAnnotations([]);
       setTextAnnotations([]);
-      const ocrPage = canvas.annotations.find((page) => page.id.endsWith('ocr'));
+      const ocrPage = canvas.annotations.find((page) =>
+        page.id.endsWith("ocr")
+      );
       const userPage = user.id
         ? canvas.annotations.find((page) => page.id.endsWith(user.id))
         : undefined;
@@ -75,14 +73,20 @@ const Annotations = ({
         await ocr.overlayOCR();
       }
 
-      const annotations = userPage?.id ? await annotationServer.get(userPage.id) : [];
+      const annotations = userPage?.id
+        ? await annotationServer.get(userPage.id)
+        : [];
       const shapeAnnos = annotations.items
-        ? annotations.items.filter((shapeAnno) => shapeAnno.target.selector.type !== 'RangeSelector')
+        ? annotations.items.filter(
+            (shapeAnno) => shapeAnno.target.selector.type !== "RangeSelector"
+          )
         : [];
       setShapeAnnotations(shapeAnnos);
 
       const textAnnos = annotations.items
-        ? annotations.items.filter((textAnno) => textAnno.target.selector.type === 'RangeSelector')
+        ? annotations.items.filter(
+            (textAnno) => textAnno.target.selector.type === "RangeSelector"
+          )
         : [];
       setTextAnnotations(textAnnos);
     };
@@ -93,15 +97,21 @@ const Annotations = ({
   }, [canvas, setOcrReady, setShapeAnnotations, setTextAnnotations]);
 
   useEffect(() => {
-    const userAnnotationCount = shapeAnnotations.length + textAnnotations.length;
+    const userAnnotationCount =
+      shapeAnnotations.length + textAnnotations.length;
     canvasEventDetails.current = {
       ...canvasEventDetails.current,
       annotationsOnPage: userAnnotationCount,
       canvas: getCanvasPid(canvas.id),
-      annotationAdded: userAnnotationCount > canvasEventDetails.current.annotationsOnPage,
-      annotationDeleted: userAnnotationCount < canvasEventDetails.current.annotationsOnPage,
+      annotationAdded:
+        userAnnotationCount > canvasEventDetails.current.annotationsOnPage,
+      annotationDeleted:
+        userAnnotationCount < canvasEventDetails.current.annotationsOnPage,
     };
-    const canvasEvent = new CustomEvent('canvasswitch', { bubbles: true, detail: canvasEventDetails.current });
+    const canvasEvent = new CustomEvent("canvasswitch", {
+      bubbles: true,
+      detail: canvasEventDetails.current,
+    });
     window.dispatchEvent(canvasEvent);
   }, [shapeAnnotations, textAnnotations, canvas]);
 
@@ -131,6 +141,7 @@ const Annotations = ({
         showAnnotations={showAnnotations}
         user={user}
         viewer={viewer}
+        setActiveTool={setActiveTool}
       />
 
       <TextAnnotations

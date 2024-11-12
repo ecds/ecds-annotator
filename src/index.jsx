@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { AppContext } from "./ViewerContext";
-import Manifest from "./components/manifest/Manifest";
+import Manifest from "./components/Manifest";
 import "./index.scss";
 
 class ECDSAnnotator {
