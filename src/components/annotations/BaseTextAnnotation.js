@@ -9,6 +9,7 @@ const BaseTextAnno = ({
     body: [
       {
         type: 'TextualBody',
+        format: "text/html",
         value: '',
         purpose: 'commenting',
         creator: user,
@@ -17,6 +18,7 @@ const BaseTextAnno = ({
     bodies: [
       {
         type: 'TextualBody',
+        format: "text/html",
         value: '',
         purpose: 'commenting',
         creator: user,

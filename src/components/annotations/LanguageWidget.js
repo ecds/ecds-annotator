@@ -22,6 +22,7 @@ const LanguageWidget = (props) => {
       comment = {
         purpose: 'commenting',
         type: 'TextualBody',
+        format: "text/html",
         value: '',
         language: navigator.language
       };

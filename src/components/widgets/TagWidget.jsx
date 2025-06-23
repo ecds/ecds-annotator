@@ -11,6 +11,7 @@ const TagWidget = ({ annotation }) => {
   const emptyTag = {
     type: 'TextualBody',
     purpose: 'tagging',
+    format: "text/plain",
     value: '',
   };
 

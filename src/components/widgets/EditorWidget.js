@@ -24,6 +24,7 @@ const EditorWidget = ({ annotation }) => {
       comment = {
         purpose: 'commenting',
         type: 'TextualBody',
+        format: 'text/html',
         value: '',
       };
 
