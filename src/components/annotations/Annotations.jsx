@@ -16,6 +16,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
   const [anno, setAnno] = useState();
   const [showAnnotations, setShowAnnotations] = useState(false);
   const [ocrReady, setOcrReady] = useState(false);
+  const [ocr, setOCR] = useState([]);
   const [isAnnotating, setIsAnnotating] = useState(false);
   const [shapeAnnotations, setShapeAnnotations] = useState([]);
   const [textAnnotations, setTextAnnotations] = useState([]);
@@ -28,6 +29,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
     canvas: showAll ? "all" : getCanvasPid(canvas.id),
     annotationAdded: false,
     annotationDeleted: false,
+    ocr: []
   });
 
   const annotationServer = new AnnotationServer({ token });
@@ -62,6 +64,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
       const ocrAnnotations = await annotationServer.get(ocrPage.id);
 
       if (ocrAnnotations && ocrAnnotations.items.length === 0) {
+        setOCR(ocrAnnotations)
         setOcrReady(true);
       } else {
         const ocr = new OCR({
@@ -107,13 +110,14 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
         userAnnotationCount > canvasEventDetails.current.annotationsOnPage,
       annotationDeleted:
         userAnnotationCount < canvasEventDetails.current.annotationsOnPage,
+      ocr
     };
     const canvasEvent = new CustomEvent("canvasswitch", {
       bubbles: true,
       detail: canvasEventDetails.current,
     });
     window.dispatchEvent(canvasEvent);
-  }, [shapeAnnotations, textAnnotations, canvas]);
+  }, [shapeAnnotations, textAnnotations, canvas, ocr]);
 
   return (
     <div>
