@@ -63,8 +63,9 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
 
       const ocrAnnotations = await annotationServer.get(ocrPage.id);
 
+      setOCR(ocrAnnotations)
+      
       if (ocrAnnotations && ocrAnnotations.items.length === 0) {
-        setOCR(ocrAnnotations)
         setOcrReady(true);
       } else {
         const ocr = new OCR({
