@@ -35,7 +35,7 @@ const ShapeAnnotations = ({
 
     // eslint-disable-next-line consistent-return
     return () => {
-      anno?.destroy();
+      annotorious.destroy();
     };
   }, [setAnno, viewer]);
 
