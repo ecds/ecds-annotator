@@ -117,8 +117,45 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
       bubbles: true,
       detail: canvasEventDetails.current,
     });
+    
     window.dispatchEvent(canvasEvent);
   }, [shapeAnnotations, textAnnotations, canvas, ocr]);
+
+  useEffect(() => {
+    const canvasUpdateEvent = new CustomEvent("canvasUpdate", {
+      bubbles: true,
+      detail: getCanvasPid(canvas.id)
+    });
+
+    window.dispatchEvent(canvasUpdateEvent)
+  }, [canvas]);
+
+  useEffect(() => {
+    const userAnnotationCount =
+      shapeAnnotations.length + textAnnotations.length;
+    
+    const userAnnotationEvent = new CustomEvent("userAnnotationsUpdated", {
+      bubbles: true,
+      detail: {
+        annotationsOnPage: userAnnotationCount,
+        annotationAdded:
+        userAnnotationCount > canvasEventDetails.current.annotationsOnPage,
+        annotationDeleted:
+        userAnnotationCount < canvasEventDetails.current.annotationsOnPage,
+      }
+    });
+
+    window.dispatchEvent(userAnnotationEvent);
+  }, [textAnnotations, shapeAnnotations]);
+
+  useEffect(() => {
+    const ocrEvent = new CustomEvent("ocrLoaded", {
+      bubbles: true,
+      detail: { ocr }
+    });
+
+    if (ocrReady) window.dispatchEvent(ocrEvent)
+  }, [ocr, ocrReady]);
 
   return (
     <div>

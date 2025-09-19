@@ -127,8 +127,18 @@ function Manifest({ manifest, user }) {
         bubbles: true,
         detail,
       });
+      
       window.dispatchEvent(canvasEvent);
     }
+  }, [showAll]);
+
+  useEffect(() => {
+    const canvasEvent = new CustomEvent("canvasUpdate", {
+      bubbles: true,
+      detail: { canvas: "all" }
+    })
+    
+    if (showAll) window.dispatchEvent(canvasEvent)
   }, [showAll]);
 
   const goToCanvas = (canvas) => {

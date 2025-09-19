@@ -5,7 +5,7 @@ import Manifest from "./components/Manifest";
 import "./index.scss";
 
 class ECDSAnnotator {
-  constructor({ manifest, token, user, id, uiActions }) {
+  constructor({ manifest, token, user, id, uiActions=[] }) {
     const rootElement = document.getElementById(id);
     rootElement.style.height = "100%";
 
