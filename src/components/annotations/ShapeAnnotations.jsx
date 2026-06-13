@@ -107,6 +107,7 @@ const ShapeAnnotations = ({
 
     const deleteAnnotation = async (annotation) => {
       await annotationServer.delete(annotation);
+      setAnnotations((shapeAnnos) => shapeAnnos.filter((a) => a.id !== annotation.id));
       cancelAnnotation();
     };
 
