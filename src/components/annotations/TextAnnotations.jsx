@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 
 import React, { useState, useEffect, useRef } from "react";
+import ReactDOM from "react-dom";
 import { Editor } from "@recogito/recogito-client-core";
 import TextAnnotation from "./TextAnnotation";
 import BaseTextAnno from "./BaseTextAnnotation";
@@ -58,9 +59,13 @@ const TextAnnotations = ({
       selectedTextAnno.annotation
     );
     createdTextAnno.bodies = createdTextAnno.body;
+    const newTextAnno = new TextAnnotation(createdTextAnno, viewer, selectTextAnno);
+    await newTextAnno.addLinks();
+    newTextAnno.addContentOverlays();
+    newTextAnno.addEditOverlay();
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
-    setTextAnnotations([...textAnnotations, createTextAnnotation]);
+    setTextAnnotations((prev) => [...prev, newTextAnno]);
     viewer.setMouseNavEnabled(true);
     setActiveTool(undefined);
   };
@@ -145,34 +150,37 @@ const TextAnnotations = ({
   }, [textAnnotations, showAnnotations, ocrReady]);
 
   useEffect(() => {
-    if (startNewTextAnnotation) {
+    if (startNewTextAnnotation && osdCanvas) {
       viewer.setMouseNavEnabled(false);
-      osdCanvas.style.zIndex = 999;
+      osdCanvas.style.zIndex = "999";
       osdCanvas.addEventListener("mouseup", createTextAnnotation);
     }
-  }, [startNewTextAnnotation]);
+  }, [startNewTextAnnotation, osdCanvas]);
 
   return (
     <div>
-      {selectedTextAnnoElement && selectedTextAnno && (
-        <Editor
-          ref={editorRef}
-          detachable
-          wrapperEl={viewer.element}
-          annotation={selectedTextAnno.annotation}
-          modifiedTarget={selectedTextAnno.annotation.target}
-          selectedElement={selectedTextAnnoElement}
-          readOnly={false}
-          allowEmpty
-          widgets={widgets}
-          // eslint-disable-next-line no-underscore-dangle
-          env={annotorious._env}
-          onAnnotationCreated={saveNewTextAnnotation}
-          onAnnotationUpdated={updateTextAnnotation}
-          onAnnotationDeleted={onDeleteAnnotation}
-          onCancel={onCancelAnnotation}
-        />
-      )}
+      {selectedTextAnnoElement && selectedTextAnno &&
+        ReactDOM.createPortal(
+          <Editor
+            ref={editorRef}
+            detachable
+            wrapperEl={viewer.element}
+            annotation={selectedTextAnno.annotation}
+            modifiedTarget={selectedTextAnno.annotation.target}
+            selectedElement={selectedTextAnnoElement}
+            readOnly={false}
+            allowEmpty
+            widgets={widgets}
+            // eslint-disable-next-line no-underscore-dangle
+            env={annotorious._env}
+            onAnnotationCreated={saveNewTextAnnotation}
+            onAnnotationUpdated={updateTextAnnotation}
+            onAnnotationDeleted={onDeleteAnnotation}
+            onCancel={onCancelAnnotation}
+          />,
+          viewer.element
+        )
+      }
     </div>
   );
 };

@@ -20,16 +20,20 @@ function Manifest({ manifest, user }) {
   const [canvasBodies, setCanvasBodies] = useState([]);
   const manifestContextValue = { currentCanvas };
 
-  window.addEventListener("popstate", () => {
-    const pathPid = getCanvasPid(location.pathname);
-    if (pathPid === "all") {
-      setShowAll(true);
-    } else if (pathPid !== currentCanvasPid) {
-      setShowAll(false);
-      setCurrentCanvas(canvases.find((canvas) => canvas.id.includes(pathPid)));
-      setCurrentCanvasPid(pathPid);
-    }
-  });
+  useEffect(() => {
+    const handlePopState = () => {
+      const pathPid = getCanvasPid(location.pathname);
+      if (pathPid === "all") {
+        setShowAll(true);
+      } else if (pathPid !== currentCanvasPid) {
+        setShowAll(false);
+        setCurrentCanvas(canvases.find((canvas) => canvas.id.includes(pathPid)));
+        setCurrentCanvasPid(pathPid);
+      }
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [canvases, currentCanvasPid]);
 
   useEffect(() => {
     if (showAll) {
@@ -45,11 +49,8 @@ function Manifest({ manifest, user }) {
         `${location.protocol}//${location.host}/annotation_count/${user.id}/${
           location.pathname.split("/").reverse()[2]
         }`
-        // "https://localhost:3000/annotations/jay/snkng"
-        // "https://localhost:3000/annotations/jay/snkng/"
       );
       const annotations = await response.json();
-      // console.log("🚀 ~ fetchVolumeAnnotations ~ annotations:", annotations);
       setAnnotatedCanvases(annotations);
     }
 
@@ -78,11 +79,6 @@ function Manifest({ manifest, user }) {
 
     if (!manifestData) fetchManifest();
   }, [manifestData, setManifestData, setCanvasBodies]);
-
-  // useEffect(() => {
-  //   if (thumbnails.length === 0) return;
-  //   setUserAnnotations(manifestData.annotations ?? []);
-  // }, [thumbnails, setUserAnnotations]);
 
   useEffect(() => {
     if (!manifestData) return;

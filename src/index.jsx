@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { AppContext } from "./ViewerContext";
 import Manifest from "./components/Manifest";
-import "./index.scss";
+import "./index.css";
 
 class ECDSAnnotator {
   constructor({ manifest, token, user, id, uiActions=[] }) {
@@ -30,3 +30,4 @@ class ECDSAnnotator {
 }
 
 export const init = (config) => new ECDSAnnotator(config);
+export default { init };

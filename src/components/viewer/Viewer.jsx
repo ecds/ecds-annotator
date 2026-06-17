@@ -7,7 +7,7 @@ import React, {
 import OpenSeadragon from 'openseadragon';
 import ViewerContext from '../../ViewerContext';
 import Annotations from '../annotations/Annotations';
-import './Viewer.scss';
+import './Viewer.css';
 
 const Viewer = ({
   canvas, setShowAll, showAll,
@@ -22,14 +22,14 @@ const Viewer = ({
   ), [viewer]);
 
   useEffect(() => {
-    setViewer(
-      OpenSeadragon({
-        element: viewerContainer.current,
-        prefixUrl: '//openseadragon.github.io/openseadragon/images/',
-        showNavigationControl: false,
-      }),
-    );
-  }, [setViewer, viewerContainer]);
+    const osd = OpenSeadragon({
+      element: viewerContainer.current,
+      prefixUrl: '//openseadragon.github.io/openseadragon/images/',
+      showNavigationControl: false,
+    });
+    setViewer(osd);
+    return () => osd.destroy();
+  }, []);
 
   useEffect(() => {
     if (!viewer) return;

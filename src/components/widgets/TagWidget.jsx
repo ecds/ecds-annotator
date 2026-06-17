@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import React, { useEffect, useRef, useState } from 'react';
 import { CSSTransition } from 'react-transition-group';
-import './TagWidget.scss';
+import './TagWidget.css';
 
 const TagWidget = ({ annotation }) => {
   const inputRef = useRef();

@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from "react";
-import * as Annotorious from "@recogito/annotorious-openseadragon";
+import Annotorious from "@recogito/annotorious-openseadragon";
 import SelectorPack from "@recogito/annotorious-selector-pack";
 import BetterPolygon from "@recogito/annotorious-better-polygon";
 import EditorWidget from "../widgets/EditorWidget";
@@ -18,12 +18,13 @@ const ShapeAnnotations = ({
   setAnnotations,
   setIsAnnotating,
   showAnnotations,
+  startNewTextAnnotation,
   setActiveTool,
   user,
   viewer,
 }) => {
   useEffect(() => {
-    const annotorious = new Annotorious(viewer, {
+    const annotorious = Annotorious(viewer, {
       locale: "auto",
       allowEmpty: true,
       widgets,
@@ -65,10 +66,7 @@ const ShapeAnnotations = ({
       }
 
       const newAnnotation = await annotationServer.create(tmpAnnotation);
-      newAnnotation.contentOverlay = new AnnotationContentOverlay(
-        viewer,
-        newAnnotation
-      );
+      newAnnotation.contentOverlay = AnnotationContentOverlay(viewer, newAnnotation);
       anno.addAnnotation(newAnnotation);
 
       setIsAnnotating(false);
@@ -83,10 +81,7 @@ const ShapeAnnotations = ({
       // Remove overlay from payload before sending to API.
       delete updatedAnnotation.contentOverlay;
       await annotationServer.update(annotation);
-      updatedAnnotation.contentOverlay = new AnnotationContentOverlay(
-        viewer,
-        updatedAnnotation
-      );
+      updatedAnnotation.contentOverlay = AnnotationContentOverlay(viewer, updatedAnnotation);
       anno.addAnnotation(updatedAnnotation);
 
       setAnnotations((shapeAnnos) => [
@@ -111,16 +106,16 @@ const ShapeAnnotations = ({
       cancelAnnotation();
     };
 
-    const clickAnnotation = (annotation, element) => {
-      annotation.contentOverlay.hideAnnotation();
+    const clickAnnotation = (annotation) => {
+      annotation.contentOverlay.hide();
     };
 
     const mouseEnterAnnotation = (annotation, element) => {
-      annotation.contentOverlay.showAnnotation(element);
+      annotation.contentOverlay.show(element);
     };
 
-    const mouseLeaveAnnotation = (annotation /* , element */) => {
-      annotation.contentOverlay.hideAnnotation();
+    const mouseLeaveAnnotation = (annotation) => {
+      annotation.contentOverlay.hide();
     };
 
     const startSelection = (/* selection */) => {
@@ -172,28 +167,16 @@ const ShapeAnnotations = ({
     annotations?.forEach((shapeAnno) => {
       if (showAnnotations) {
         // eslint-disable-next-line no-param-reassign
-        shapeAnno.contentOverlay = new AnnotationContentOverlay(
-          viewer,
-          shapeAnno
-        );
+        shapeAnno.contentOverlay = AnnotationContentOverlay(viewer, shapeAnno);
         anno.addAnnotation(shapeAnno);
       }
     });
   }, [annotations, showAnnotations, anno]);
 
-  // useEffect(() => {
-  //   if (startNewTextAnnotation) {
-  //     anno.disableSelect = true;
-  //     annotations?.forEach((shapeAnno) => {
-  //       shapeAnno.contentOverlay = undefined;
-  //     });
-  //   } else {
-  //     anno.disableSelect = true;
-  //     annotations?.forEach((shapeAnno) => {
-  //       shapeAnno.contentOverlay = new AnnotationContentOverlay(viewer, shapeAnno);
-  //     });
-  //   }
-  // }, [startNewTextAnnotation]);
+  useEffect(() => {
+    if (!anno) return;
+    anno.disableSelect = startNewTextAnnotation;
+  }, [anno, startNewTextAnnotation]);
 
   return "";
 };

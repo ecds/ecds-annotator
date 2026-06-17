@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import ViewerContext, { AppContext } from "../../ViewerContext";
 import Toolbar from "../toolbar/Toolbar";
 import OCR from "./OCR";
@@ -6,7 +6,7 @@ import AnnotationServer from "../../utils/AnnotationServer";
 import ShapeAnnotations from "./ShapeAnnotations";
 import TextAnnotations from "./TextAnnotations";
 import { getCanvasPid } from "../../utils/canvasUtils";
-import "./Annotations.scss";
+import "./Annotations.css";
 import "@recogito/annotorious/dist/annotorious.min.css";
 import "jodit/build/jodit.es2018.min.css";
 
@@ -32,7 +32,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
     ocr: []
   });
 
-  const annotationServer = new AnnotationServer({ token });
+  const annotationServer = useMemo(() => AnnotationServer({ token }), [token]);
 
   const startAnnotation = (tool) => {
     if (tool === "text") {
@@ -68,13 +68,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
       if (ocrAnnotations && ocrAnnotations.items.length === 0) {
         setOcrReady(true);
       } else {
-        const ocr = new OCR({
-          ocrAdded: setOcrReady,
-          viewer,
-          items: ocrAnnotations.items,
-        });
-
-        await ocr.overlayOCR();
+        await OCR({ viewer, items: ocrAnnotations.items, ocrAdded: setOcrReady });
       }
 
       const annotations = userPage?.id
@@ -97,7 +91,6 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
 
     setOcrReady(false);
     onCanvasChange();
-    // dispatchCanvasSwitch();
   }, [canvas, setOcrReady, setShapeAnnotations, setTextAnnotations]);
 
   useEffect(() => {

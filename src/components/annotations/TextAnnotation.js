@@ -50,18 +50,14 @@ class TextAnnotation {
 
   addContentOverlays() {
     for (const link of this.links) {
-      const overlay = new AnnotationContentOverlay(this.viewer, this.annotation);
-      //
-      // DISABLE OSD MOUSE NAV
-      //
-      link.onmouseenter = (event) => {
+      const overlay = AnnotationContentOverlay(this.viewer, this.annotation);
+      link.onmouseenter = () => {
         this.viewer.setMouseNavEnabled(false);
-        overlay.showAnnotation(link, event);
+        overlay.show(link);
       };
-
-      link.onmouseleave = (/* event */) => {
+      link.onmouseleave = () => {
         this.viewer.setMouseNavEnabled(true);
-        overlay.hideAnnotation();
+        overlay.hide();
       };
     }
   }
@@ -81,16 +77,6 @@ class TextAnnotation {
       link.onclick = undefined;
     });
   }
-
-  // showAnnotation(event) {
-  //   const content = document.createElement('div');
-  //   content.className = 'rdx-annotation-content';
-  //   content.innerHTML = firstComment.value;
-  //   const { x, y } = this.viewer.getOverlayById(event.target).location;
-  //   this.createOverlay(x, y);
-  //   const y = event.screenY;
-  //   const x = event.screenX;
-  // }
 
   hideAnnotation() {
     this.viewer.removeOverlay(this.annotationOverlay);
@@ -126,11 +112,11 @@ class TextAnnotation {
 
   removeLinks() {
     try {
-      for (let link of this.links) {
-        link = document.querySelector(`[data-id="${this.annotation.id}"]`);
+      for (const link of this.links) {
         if (!link) return;
         link.parentElement.innerHTML = link.parentElement.innerText;
       }
+      this.links = [];
     } catch (error) {
       console.error(error);
     }

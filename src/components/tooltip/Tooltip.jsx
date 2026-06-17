@@ -1,6 +1,6 @@
 // Thanks Vitor Paladini https://dev.to/vtrpldn/how-to-make-an-extremely-reusable-tooltip-component-with-react-and-nothing-else-3pnk
 import React, { useState } from 'react';
-import './Tooltip.scss';
+import './Tooltip.css';
 
 const Tooltip = ({
   content,
