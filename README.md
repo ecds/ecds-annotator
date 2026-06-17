@@ -77,9 +77,10 @@ Production builds are handled automatically by readux's GitHub Actions workflow 
 **How it works**
 
 1. The GH Actions workflow checks out both readux *and* this repo (into `ecds-annotator/` inside the readux workspace) before building the Docker image.
-2. The Docker `js-builder` stage copies the ecds-annotator source to `/home/ecds-annotator/`, which is where readux's `vite.config.js` alias and `package.json` `file:` dependency both resolve to from `WORKDIR /home/readux`.
-3. `npm run build` inside the container compiles everything — ecds-annotator source included — into `apps/static/js/main.js`.
-4. The production stage copies the built JS from `js-builder` and runs `collectstatic` at startup via `entrypoint.sh`.
+2. The Docker `js-builder` stage installs and builds ecds-annotator first, generating `dist/style.css`.
+3. readux's `npm install` runs next — its `postinstall` script copies `dist/style.css` into Django's static directory, and the Vite alias points at the ecds-annotator source for the JS build.
+4. `npm run build` compiles everything into `apps/static/js/main.js`.
+5. The production stage copies the built assets from `js-builder` and runs `collectstatic` at startup via `entrypoint.sh`.
 
 **If you need to verify the production build locally**
 
