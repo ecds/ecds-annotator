@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ECDS Annotator</title>
+    <style>
+      body { margin: 0; background: black; }
+      .container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+        height: 100vh;
+      }
+      nav { grid-area: 1 / 1 / 2 / 6; height: 120px; color: white; }
+      .viewer-container { grid-area: 2 / 1 / 6 / 4; }
+      .sidebar { grid-area: 2 / 4 / 6 / 6; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav><h1>ECDS Annotator</h1></nav>
+      <div id="rdx-viewer" class="viewer-container"></div>
+      <div class="sidebar"></div>
+    </div>
+    <script type="module">
+      import { init } from '/src/index.jsx';
+      init({
+        manifest: 'https://dev.readux.io/iiif/v3/sndcv/manifest',
+        id: 'rdx-viewer',
+        host: 'https://readux-dev.org',
+        user: { id: 'jayvarner', displayName: 'Jay Varner' },
+        token: 'XXXXX',
+      });
+    </script>
+  </body>
+</html>

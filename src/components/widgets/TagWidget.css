@@ -1,0 +1,3 @@
+ul.r6o-taglist * :not(path) {
+  all: unset;
+}

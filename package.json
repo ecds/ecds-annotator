@@ -1,0 +1,45 @@
+{
+  "name": "ecds-annotator",
+  "version": "0.0.4",
+  "description": "IIIF viewer and annotation interface for readux.io. Built using Annotorious.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecds/ecds-annotator.git"
+  },
+  "main": "dist/ecds-annotator.umd.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint src/**/*.js src/**/*.jsx"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "author": "Emory Center for Digital Scholarship",
+  "license": "ISC",
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.0",
+    "autoprefixer": "^10.4.7",
+    "eslint": "^8.39.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "postcss": "^8.4.14",
+    "prettier": "2.7.1",
+    "react-icons": "^4.8.0",
+    "tailwindcss": "^3.0.24",
+    "vite": "^4.0.0"
+  },
+  "dependencies": {
+    "@recogito/annotorious-better-polygon": "^0.2.0",
+    "@recogito/annotorious-openseadragon": "^2.7.6",
+    "@recogito/annotorious-selector-pack": "^0.5.3",
+    "@recogito/annotorious-shape-labels": "^0.2.3",
+    "@recogito/recogito-client-core": "^1.7.7",
+    "jodit": "^3.18.9",
+    "openseadragon": "^3.0.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  }
+}
