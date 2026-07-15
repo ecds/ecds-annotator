@@ -33,10 +33,10 @@
   },
   "dependencies": {
     "@recogito/annotorious-better-polygon": "^0.2.0",
-    "@recogito/annotorious-openseadragon": "^2.7.6",
-    "@recogito/annotorious-selector-pack": "^0.5.3",
+    "@recogito/annotorious-openseadragon": "^2.7.19",
+    "@recogito/annotorious-selector-pack": "^0.6.1",
     "@recogito/annotorious-shape-labels": "^0.2.3",
-    "@recogito/recogito-client-core": "^1.7.7",
+    "@recogito/recogito-client-core": "^1.7.9",
     "jodit": "^3.18.9",
     "openseadragon": "^3.0.0",
     "react": "^18.1.0",

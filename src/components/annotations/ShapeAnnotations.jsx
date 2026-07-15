@@ -19,6 +19,7 @@ const ShapeAnnotations = ({
   setIsAnnotating,
   showAnnotations,
   startNewTextAnnotation,
+  isTextEditorOpen,
   setActiveTool,
   user,
   viewer,
@@ -175,8 +176,8 @@ const ShapeAnnotations = ({
 
   useEffect(() => {
     if (!anno) return;
-    anno.disableSelect = startNewTextAnnotation;
-  }, [anno, startNewTextAnnotation]);
+    anno.disableSelect = startNewTextAnnotation || isTextEditorOpen;
+  }, [anno, startNewTextAnnotation, isTextEditorOpen]);
 
   return "";
 };

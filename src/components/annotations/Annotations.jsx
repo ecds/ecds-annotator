@@ -21,6 +21,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
   const [shapeAnnotations, setShapeAnnotations] = useState([]);
   const [textAnnotations, setTextAnnotations] = useState([]);
   const [startNewTextAnnotation, setStartNewTextAnnotation] = useState(false);
+  const [isTextEditorOpen, setIsTextEditorOpen] = useState(false);
   const osdCanvas = document.querySelector(`.${viewer.canvas.className} div`);
   const [activeTool, setActiveTool] = useState(undefined);
 
@@ -173,6 +174,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
         setAnnotations={setShapeAnnotations}
         setIsAnnotating={setIsAnnotating}
         startNewTextAnnotation={startNewTextAnnotation}
+        isTextEditorOpen={isTextEditorOpen}
         showAnnotations={showAnnotations}
         user={user}
         viewer={viewer}
@@ -188,6 +190,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
         osdCanvas={osdCanvas}
         isAnnotating={isAnnotating}
         setStartNewTextAnnotation={setStartNewTextAnnotation}
+        setIsTextEditorOpen={setIsTextEditorOpen}
         showAnnotations={showAnnotations}
         setActiveTool={setActiveTool}
         startNewTextAnnotation={startNewTextAnnotation}

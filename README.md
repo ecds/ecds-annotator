@@ -97,6 +97,6 @@ This only runs the JS build stage and lets you inspect `apps/static/js/main.js` 
 ## Architecture notes
 
 - **Vite lib mode** — `vite build` here outputs ES and UMD bundles to `dist/`. Only the CSS is used by readux in production; the JS bundles exist if the component is ever consumed standalone.
-- **Source alias in readux** — `readux/vite.config.js` aliases `ecds-annotator` → `../ecds-annotator/src/index.jsx`. This lets Rollup tree-shake and compile everything together, avoiding CJS interop issues from double-bundling a pre-built package.
+- **Source alias in readux** — `readux/vite.config.mjs` aliases `ecds-annotator` → `../ecds-annotator/src/index.jsx`. This lets Rollup tree-shake and compile everything together, avoiding CJS interop issues from double-bundling a pre-built package.
 - **IIFE output** — readux's Vite outputs `main.js` as an IIFE so Django can load it with a plain `<script>` tag (no `type="module"` required).
 - **react-draggable stub** — `react-draggable` is aliased to a no-op passthrough in readux's Vite config. The upstream package calls `ReactDOM.findDOMNode`, which is absent from the React 18 production bundle. The editor popup is fixed-position rather than draggable as a result.

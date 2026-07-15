@@ -17,6 +17,7 @@ const TextAnnotations = ({
   osdCanvas,
   isAnnotating,
   setStartNewTextAnnotation,
+  setIsTextEditorOpen,
   setActiveTool,
   showAnnotations,
   startNewTextAnnotation,
@@ -31,8 +32,10 @@ const TextAnnotations = ({
   const widgets = [EditorWidget, TagWidget];
 
   const selectTextAnno = (annotation, element) => {
+    if (selectedTextAnno) return;
     setSelectedTextAnno(annotation);
     setSelectedTextAnnoElement(element);
+    setIsTextEditorOpen(true);
   };
 
   const createTextAnnotation = () => {
@@ -44,14 +47,13 @@ const TextAnnotations = ({
     )
       return;
     const range = selection.getRangeAt(0);
-    osdCanvas.removeEventListener("mouseup", createTextAnnotation);
-    // eslint-disable-next-line no-param-reassign
-    osdCanvas.style.zIndex = "";
+    document.removeEventListener("mouseup", createTextAnnotation);
     const baseTextAnno = BaseTextAnno({ user, canvas, range });
     setSelectedTextAnno(
       new TextAnnotation(baseTextAnno, viewer, selectTextAnno)
     );
     setSelectedTextAnnoElement(selection.focusNode.parentElement);
+    setIsTextEditorOpen(true);
   };
 
   const saveNewTextAnnotation = async () => {
@@ -65,6 +67,7 @@ const TextAnnotations = ({
     newTextAnno.addEditOverlay();
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
+    setIsTextEditorOpen(false);
     setTextAnnotations((prev) => [...prev, newTextAnno]);
     viewer.setMouseNavEnabled(true);
     setActiveTool(undefined);
@@ -82,6 +85,7 @@ const TextAnnotations = ({
     ]);
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
+    setIsTextEditorOpen(false);
     setStartNewTextAnnotation(false);
     viewer.setMouseNavEnabled(true);
     setActiveTool(undefined);
@@ -90,6 +94,7 @@ const TextAnnotations = ({
   const onCancelAnnotation = () => {
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
+    setIsTextEditorOpen(false);
     setStartNewTextAnnotation(false);
     viewer.setMouseNavEnabled(true);
     setActiveTool(undefined);
@@ -151,9 +156,9 @@ const TextAnnotations = ({
 
   useEffect(() => {
     if (startNewTextAnnotation && osdCanvas) {
+      window.getSelection()?.removeAllRanges();
       viewer.setMouseNavEnabled(false);
-      osdCanvas.style.zIndex = "999";
-      osdCanvas.addEventListener("mouseup", createTextAnnotation);
+      document.addEventListener("mouseup", createTextAnnotation);
     }
   }, [startNewTextAnnotation, osdCanvas]);
 
