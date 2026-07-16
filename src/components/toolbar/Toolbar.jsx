@@ -44,6 +44,7 @@ const AnnotationTool = ({
 const Toolbar = ({
   activeTool,
   annotorious,
+  cancelAnnotation,
   expandTools,
   ocrReady,
   setActiveTool,
@@ -70,7 +71,17 @@ const Toolbar = ({
     viewer.addControl(containerRef.current, controlOptions);
   }, [viewer, annotorious]);
 
+  useEffect(() => {
+    if (!expandTools && activeTool) {
+      cancelAnnotation();
+    }
+  }, [expandTools]);
+
   const selectTool = (tool) => {
+    if (tool === activeTool) {
+      cancelAnnotation();
+      return;
+    }
     startAnnotation(tool);
     setActiveTool(tool);
     if (tool !== "text") {

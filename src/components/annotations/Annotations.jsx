@@ -43,6 +43,18 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
     }
   };
 
+  const cancelAnnotation = () => {
+    if (!activeTool) return;
+    if (activeTool === "text") {
+      setStartNewTextAnnotation(false);
+    } else if (anno) {
+      anno.cancelSelected();
+      anno.setDrawingEnabled(false);
+      setIsAnnotating(false);
+    }
+    setActiveTool(undefined);
+  };
+
   /*
    * Get OCR and user annotations when a new canvas is loaded.
    */
@@ -158,6 +170,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
         expandTools={showAnnotations}
         toggleTools={() => setShowAnnotations(!showAnnotations)}
         startAnnotation={startAnnotation}
+        cancelAnnotation={cancelAnnotation}
         isAnnotating={isAnnotating}
         ocrReady={ocrReady}
         setShowAll={setShowAll}

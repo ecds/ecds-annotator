@@ -159,6 +159,10 @@ const TextAnnotations = ({
       window.getSelection()?.removeAllRanges();
       viewer.setMouseNavEnabled(false);
       document.addEventListener("mouseup", createTextAnnotation);
+      return () => {
+        document.removeEventListener("mouseup", createTextAnnotation);
+        viewer.setMouseNavEnabled(true);
+      };
     }
   }, [startNewTextAnnotation, osdCanvas]);
 
