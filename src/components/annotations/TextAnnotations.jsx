@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import ReactDOM from "react-dom";
 import { Editor } from "@recogito/recogito-client-core";
 import TextAnnotation from "./TextAnnotation";
@@ -19,6 +19,7 @@ const TextAnnotations = ({
   setStartNewTextAnnotation,
   setIsTextEditorOpen,
   setActiveTool,
+  activeTool,
   showAnnotations,
   startNewTextAnnotation,
   user,
@@ -29,10 +30,21 @@ const TextAnnotations = ({
   const [selectedTextAnnoElement, setSelectedTextAnnoElement] =
     useState(undefined);
   const editorRef = useRef();
+  const activeToolRef = useRef(activeTool);
+  const cancellingRef = useRef(false);
+  const selectedTextAnnoRef = useRef(undefined);
+
+  useEffect(() => {
+    activeToolRef.current = activeTool;
+  }, [activeTool]);
+
+  const isToolActive = useCallback(() => !!activeToolRef.current, []);
   const widgets = [EditorWidget, TagWidget];
 
   const selectTextAnno = (annotation, element) => {
-    if (selectedTextAnno) return;
+    if (selectedTextAnnoRef.current) return;
+    if (cancellingRef.current) return;
+    selectedTextAnnoRef.current = annotation;
     setSelectedTextAnno(annotation);
     setSelectedTextAnnoElement(element);
     setIsTextEditorOpen(true);
@@ -49,9 +61,9 @@ const TextAnnotations = ({
     const range = selection.getRangeAt(0);
     document.removeEventListener("mouseup", createTextAnnotation);
     const baseTextAnno = BaseTextAnno({ user, canvas, range });
-    setSelectedTextAnno(
-      new TextAnnotation(baseTextAnno, viewer, selectTextAnno)
-    );
+    const newAnno = new TextAnnotation(baseTextAnno, viewer, selectTextAnno);
+    selectedTextAnnoRef.current = newAnno;
+    setSelectedTextAnno(newAnno);
     setSelectedTextAnnoElement(selection.focusNode.parentElement);
     setIsTextEditorOpen(true);
   };
@@ -63,8 +75,9 @@ const TextAnnotations = ({
     createdTextAnno.bodies = createdTextAnno.body;
     const newTextAnno = new TextAnnotation(createdTextAnno, viewer, selectTextAnno);
     await newTextAnno.addLinks();
-    newTextAnno.addContentOverlays();
+    newTextAnno.addContentOverlays(isToolActive);
     newTextAnno.addEditOverlay();
+    selectedTextAnnoRef.current = undefined;
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
     setIsTextEditorOpen(false);
@@ -83,6 +96,7 @@ const TextAnnotations = ({
       ...textAnnotations.filter((textAnno) => textAnno.id !== savedAnno.id),
       new TextAnnotation(selectedTextAnno.annotation, viewer, selectTextAnno),
     ]);
+    selectedTextAnnoRef.current = undefined;
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
     setIsTextEditorOpen(false);
@@ -92,6 +106,10 @@ const TextAnnotations = ({
   };
 
   const onCancelAnnotation = () => {
+    cancellingRef.current = true;
+    selectedTextAnnoRef.current = undefined;
+    if (annotorious) annotorious.disableSelect = true;
+    setTimeout(() => { cancellingRef.current = false; }, 200);
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
     setIsTextEditorOpen(false);
@@ -131,7 +149,7 @@ const TextAnnotations = ({
       });
     } else {
       textAnnotations?.forEach((textAnno) => {
-        textAnno.addContentOverlays();
+        textAnno.addContentOverlays(isToolActive);
         textAnno.addEditOverlay();
       });
     }
@@ -144,7 +162,7 @@ const TextAnnotations = ({
     if (!ocrReady) return;
     const addTextAnnos = async (textAnno) => {
       await textAnno.addLinks();
-      textAnno.addContentOverlays();
+      textAnno.addContentOverlays(isToolActive);
       textAnno.addEditOverlay();
     };
 

@@ -48,10 +48,11 @@ class TextAnnotation {
     this.addEditOverlay();
   }
 
-  addContentOverlays() {
+  addContentOverlays(isToolActive = () => false) {
     for (const link of this.links) {
       const overlay = AnnotationContentOverlay(this.viewer, this.annotation);
       link.onmouseenter = () => {
+        if (isToolActive()) return;
         this.viewer.setMouseNavEnabled(false);
         overlay.show(link);
       };

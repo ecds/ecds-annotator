@@ -17,6 +17,8 @@ const EditorWidget = ({ annotation }) => {
     buttonsSM: 'bold,italic,underline,link,undo,redo,source',
   });
 
+  setTimeout(() => editor.focus(), 0);
+
   if (annotation) {
     let comment = annotation.bodies.find((body) => body.purpose === 'commenting');
 

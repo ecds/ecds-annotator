@@ -10,6 +10,10 @@ svg.a9s-annotationlayer .a9s-annotation .a9s-inner {
   z-index: 1;
 }
 
+.rdx-shape-annotating span {
+  pointer-events: none;
+}
+
 .openseadragon-canvas span button {
   background-color: rgba(0, 191, 255, 0.5);
   color: inherit;

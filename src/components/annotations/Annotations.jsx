@@ -155,6 +155,11 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
   }, [textAnnotations, shapeAnnotations]);
 
   useEffect(() => {
+    if (!viewer) return;
+    viewer.canvas.classList.toggle("rdx-shape-annotating", isAnnotating);
+  }, [isAnnotating, viewer]);
+
+  useEffect(() => {
     const ocrEvent = new CustomEvent("ocrLoaded", {
       bubbles: true,
       detail: { ocr }
@@ -188,6 +193,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
         setIsAnnotating={setIsAnnotating}
         startNewTextAnnotation={startNewTextAnnotation}
         isTextEditorOpen={isTextEditorOpen}
+        activeTool={activeTool}
         showAnnotations={showAnnotations}
         user={user}
         viewer={viewer}
@@ -206,6 +212,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
         setIsTextEditorOpen={setIsTextEditorOpen}
         showAnnotations={showAnnotations}
         setActiveTool={setActiveTool}
+        activeTool={activeTool}
         startNewTextAnnotation={startNewTextAnnotation}
         user={user}
         viewer={viewer}

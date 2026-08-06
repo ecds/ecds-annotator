@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Annotorious from "@recogito/annotorious-openseadragon";
 import SelectorPack from "@recogito/annotorious-selector-pack";
 import BetterPolygon from "@recogito/annotorious-better-polygon";
@@ -20,10 +20,12 @@ const ShapeAnnotations = ({
   showAnnotations,
   startNewTextAnnotation,
   isTextEditorOpen,
+  activeTool,
   setActiveTool,
   user,
   viewer,
 }) => {
+  const activeToolRef = useRef(activeTool);
   useEffect(() => {
     const annotorious = Annotorious(viewer, {
       locale: "auto",
@@ -71,6 +73,8 @@ const ShapeAnnotations = ({
       anno.addAnnotation(newAnnotation);
 
       setIsAnnotating(false);
+      anno.setDrawingEnabled(false);
+      setActiveTool(undefined);
 
       setAnnotations((shapeAnnos) => [...shapeAnnos, newAnnotation]);
     };
@@ -96,6 +100,7 @@ const ShapeAnnotations = ({
     };
 
     const cancelAnnotation = () => {
+      anno.disableSelect = true;
       anno.cancelSelected();
       setIsAnnotating(false);
       setActiveTool(undefined);
@@ -112,6 +117,7 @@ const ShapeAnnotations = ({
     };
 
     const mouseEnterAnnotation = (annotation, element) => {
+      if (activeToolRef.current) return;
       annotation.contentOverlay.show(element);
     };
 
@@ -173,6 +179,10 @@ const ShapeAnnotations = ({
       }
     });
   }, [annotations, showAnnotations, anno]);
+
+  useEffect(() => {
+    activeToolRef.current = activeTool;
+  }, [activeTool]);
 
   useEffect(() => {
     if (!anno) return;
