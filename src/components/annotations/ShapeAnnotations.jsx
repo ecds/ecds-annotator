@@ -104,6 +104,7 @@ const ShapeAnnotations = ({
       anno.cancelSelected();
       setIsAnnotating(false);
       setActiveTool(undefined);
+      setTimeout(() => { anno.disableSelect = false; }, 200);
     };
 
     const deleteAnnotation = async (annotation) => {

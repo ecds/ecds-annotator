@@ -8,6 +8,7 @@ import {
   FaRegCircle,
   FaComment,
   FaCommentSlash,
+  FaSpinner,
 } from "react-icons/fa";
 import { MdGesture } from "react-icons/md";
 import { TfiLayoutGrid4Alt } from "react-icons/tfi";
@@ -46,6 +47,7 @@ const Toolbar = ({
   annotorious,
   cancelAnnotation,
   expandTools,
+  isSaving,
   ocrReady,
   setActiveTool,
   setShowAll,
@@ -122,6 +124,12 @@ const Toolbar = ({
           {expandTools ? <FaCommentSlash /> : <FaComment />}
         </button>
       </Tooltip>
+
+      {isSaving && (
+        <span className="flex justify-center py-1 animate-spin text-sky-400" aria-label="Saving…">
+          <FaSpinner />
+        </span>
+      )}
 
       {expandTools && Boolean(user?.id) && (
         <>

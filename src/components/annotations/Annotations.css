@@ -14,6 +14,10 @@ svg.a9s-annotationlayer .a9s-annotation .a9s-inner {
   pointer-events: none;
 }
 
+::highlight(rdx-text-annotation-preview) {
+  background-color: rgba(0, 191, 255, 0.3);
+}
+
 .openseadragon-canvas span button {
   background-color: rgba(0, 191, 255, 0.5);
   color: inherit;

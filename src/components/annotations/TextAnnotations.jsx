@@ -34,6 +34,16 @@ const TextAnnotations = ({
   const cancellingRef = useRef(false);
   const selectedTextAnnoRef = useRef(undefined);
 
+  const applySelectionHighlight = (range) => {
+    if (!CSS.highlights) return;
+    CSS.highlights.set("rdx-text-annotation-preview", new Highlight(range));
+  };
+
+  const clearSelectionHighlight = () => {
+    if (!CSS.highlights) return;
+    CSS.highlights.delete("rdx-text-annotation-preview");
+  };
+
   useEffect(() => {
     activeToolRef.current = activeTool;
   }, [activeTool]);
@@ -60,6 +70,7 @@ const TextAnnotations = ({
       return;
     const range = selection.getRangeAt(0);
     document.removeEventListener("mouseup", createTextAnnotation);
+    applySelectionHighlight(range);
     const baseTextAnno = BaseTextAnno({ user, canvas, range });
     const newAnno = new TextAnnotation(baseTextAnno, viewer, selectTextAnno);
     selectedTextAnnoRef.current = newAnno;
@@ -77,6 +88,7 @@ const TextAnnotations = ({
     await newTextAnno.addLinks();
     newTextAnno.addContentOverlays(isToolActive);
     newTextAnno.addEditOverlay();
+    clearSelectionHighlight();
     selectedTextAnnoRef.current = undefined;
     setSelectedTextAnno(undefined);
     setSelectedTextAnnoElement(undefined);
@@ -108,6 +120,7 @@ const TextAnnotations = ({
   const onCancelAnnotation = () => {
     cancellingRef.current = true;
     selectedTextAnnoRef.current = undefined;
+    clearSelectionHighlight();
     if (annotorious) annotorious.disableSelect = true;
     setTimeout(() => { cancellingRef.current = false; }, 200);
     setSelectedTextAnno(undefined);

@@ -22,6 +22,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
   const [textAnnotations, setTextAnnotations] = useState([]);
   const [startNewTextAnnotation, setStartNewTextAnnotation] = useState(false);
   const [isTextEditorOpen, setIsTextEditorOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const osdCanvas = document.querySelector(`.${viewer.canvas.className} div`);
   const [activeTool, setActiveTool] = useState(undefined);
 
@@ -33,7 +34,10 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
     ocr: []
   });
 
-  const annotationServer = useMemo(() => AnnotationServer({ token }), [token]);
+  const annotationServer = useMemo(
+    () => AnnotationServer({ token, onPending: () => setIsSaving(true), onSettled: () => setIsSaving(false) }),
+    [token]
+  );
 
   const startAnnotation = (tool) => {
     if (tool === "text") {
@@ -177,6 +181,7 @@ const Annotations = ({ canvas, setShowAll, showAll }) => {
         startAnnotation={startAnnotation}
         cancelAnnotation={cancelAnnotation}
         isAnnotating={isAnnotating}
+        isSaving={isSaving}
         ocrReady={ocrReady}
         setShowAll={setShowAll}
         activeTool={activeTool}

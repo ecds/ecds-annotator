@@ -14,10 +14,19 @@ const makeRequest = (headers, annotation, method, path) => {
   });
 };
 
-const createAnnotationServer = ({ token, host = 'https://readux.io' } = {}) => {
+const createAnnotationServer = ({ token, host = 'https://readux.io', onPending, onSettled } = {}) => {
   const headers = {
     'Content-Type': 'application/json',
     'X-CSRFToken': token,
+  };
+
+  const mutate = async (fn) => {
+    onPending?.();
+    try {
+      return await fn();
+    } finally {
+      onSettled?.();
+    }
   };
 
   const get = async (path) => {
@@ -25,24 +34,24 @@ const createAnnotationServer = ({ token, host = 'https://readux.io' } = {}) => {
     return response.json();
   };
 
-  const create = async (annotation, path = '/annotations-crud/') => {
+  const create = (annotation, path = '/annotations-crud/') => mutate(async () => {
     annotation.id = annotation.id.replace('#', '');
     const response = await makeRequest(headers, annotation, 'post', path);
     return response.json();
-  };
+  });
 
-  const update = async (annotation, path = '/annotations-crud/') => {
+  const update = (annotation, path = '/annotations-crud/') => mutate(async () => {
     annotation.id = annotation.id.replace('#', '');
     const response = await makeRequest(headers, annotation, 'put', path);
     return response.json();
-  };
+  });
 
-  const del = async (annotation, path = '/annotations-crud/') => {
+  const del = (annotation, path = '/annotations-crud/') => mutate(async () => {
     annotation.id = annotation.id.replace('#', '');
     annotation.contentOverlay = undefined;
     await makeRequest(headers, annotation, 'delete', path);
     annotation.id = `#${annotation.id}`;
-  };
+  });
 
   return { get, create, update, delete: del };
 };
